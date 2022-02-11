@@ -12,16 +12,15 @@ def checkIfAllTablesExist(arr):
 
 def extractData(npArr, txt):
 
-    lenOfArray = npArr.shape[0]
-    widthOfArray = npArr.shape[1]
-    forLoopStartValue = int(np.where(npArr==txt)[0])+1
+    lenOfArray = npArr.shape[0] # Length of the array
+    widthOfArray = npArr.shape[1] #Width of the array
+    forLoopStartValue = int(np.where(npArr==txt)[0])+1 #The loop will start from the row after the specified text
     for i in range(forLoopStartValue, lenOfArray):
-        if npArr[i][0] == -999:
+        if npArr[i][0] == -999: #Loop ends when the -999 is found
             newArray = npArr[forLoopStartValue:i]
             break
 
     if txt == "BUS DATA FOLLOWS":
-        # Add code here for extracting SBase
         arrayToReturn = np.zeros((newArray.shape[0],4))
         arrayToReturn[:,0] = newArray[:,0]
         arrayToReturn[:,1] = newArray[:,7]
