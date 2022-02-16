@@ -6,9 +6,13 @@ nptest = test.to_numpy()
 #test
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> parent of e28ffca (Test)
+=======
+#Rennie HI!
+>>>>>>> parent of 7e86a50 (Delete line 8)
 #For loop method
 lenOfNp = np.shape(nptest)
 npflipped = np.transpose(nptest)
