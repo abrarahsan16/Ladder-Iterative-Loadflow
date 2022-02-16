@@ -5,6 +5,10 @@ test = pd.read_excel('test.xlsx')
 nptest = test.to_numpy()
 #test
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of e28ffca (Test)
 #For loop method
 lenOfNp = np.shape(nptest)
 npflipped = np.transpose(nptest)
