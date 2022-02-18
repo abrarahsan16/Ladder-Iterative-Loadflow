@@ -28,7 +28,7 @@ V=[0,0]
 I=[0,0] #Bus current
 Il=[0,0,0] #Load current
 Arr1 = np.array([[1,1500,750],[2,900,500]]);  ### #input1
-Arr2 = np.array([[1, 2, 0.1705, 0.3409],[1, 3, 0.2273, 0.4545]]); ### #input2
+Arr2 = np.array([[1, 2, 0.1705, 0.3409],[2, 3, 0.2273, 0.4545]]); ### #input2
 BU=Arr1[:, 0] #number of buses
 dfObj = pd.DataFrame(Arr2, columns=['Bus1', 'Bus2', 'R', 'X']) #Create a DataFrame object
 duplicateRowsDF = dfObj[dfObj.duplicated(['Bus1'])]   # Select all duplicate rows based on multiple column names in list

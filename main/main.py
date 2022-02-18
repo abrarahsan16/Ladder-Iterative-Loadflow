@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from GUI import guiInit
 from Parser import parser
+from Calculation import calcMain
 
 if __name__ == '__main__':
 
@@ -16,8 +17,6 @@ if __name__ == '__main__':
 
     SBase = parser.SBaseExtractor(numpyConversion)
 
-
-
     if checker == False:
         raise ValueError("Excel does not contain Bus or Branch data, please double check and try again")
 
@@ -28,4 +27,4 @@ if __name__ == '__main__':
 
     print("Table extraction complete")
 
-
+    calcMain.calcMain(busData, branchData, float(tol))
