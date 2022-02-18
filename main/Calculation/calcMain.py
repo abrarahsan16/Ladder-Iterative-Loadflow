@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from Calculation import FWRsweep, BKWsweep
 
-def calcMain(busArr, branchArr, Tol):
+def calcMain(busArr, branchArr, Tol, Sb, Vb):
     outputArr = np.zeros([busArr.shape[0], 7], dtype=np.complex_)
     outputArr[:,0] = branchArr[:,0] # From Node
     outputArr[:,1] = branchArr[:,1] # To Node
@@ -13,7 +13,7 @@ def calcMain(busArr, branchArr, Tol):
     # outputArr[:,6] # Load current
     n = 0 # Number of iterations
     Vold = 0 # Old Voltage Value
-    Vs = 7200 # Source Voltage
+    Vs = 1 # Source Voltage
 
     while (1):
         outputArr = FWRsweep.FWR(outputArr, Vs)
@@ -29,8 +29,8 @@ def calcMain(busArr, branchArr, Tol):
             Vold = Vl
             outputArr = BKWsweep.BKWsweep(busArr, outputArr)
         n += 1
-        if n == 1000:
-            print("Failed to converge")
+        if n == 50:
+            print("Failed to converge. Report has not been created")
             break
     '''
     BU = busArr[:, 0] #Counts the number of buses
