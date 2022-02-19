@@ -6,7 +6,7 @@ from GUI import guiInit
 from Parser import parser
 from Calculation import calcMain
 
-cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\Datasets\\3busCDF.xlsx"
+cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\Datasets\IEEE 33 CDF (Updated)_2.xlsx"
 tol = 0.0001
 
 readInput = pd.read_excel(cdfPath, header=None)
