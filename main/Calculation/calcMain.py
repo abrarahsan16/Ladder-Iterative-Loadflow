@@ -3,7 +3,7 @@ import pandas as pd
 from Calculation import FWRsweep, BKWsweep
 
 def calcMain(busArr, branchArr, Tol, Sb, Vb):
-    outputArr = np.zeros([busArr.shape[0], 7], dtype=np.complex_)
+    outputArr = np.zeros([branchArr.shape[0], 7], dtype=np.complex_)
     outputArr[:,0] = branchArr[:,0] # From Node
     outputArr[:,1] = branchArr[:,1] # To Node
     outputArr[:,2] = branchArr[:,2] # R
@@ -13,7 +13,8 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
     # outputArr[:,6] # Load current
     n = 0 # Number of iterations
     Vold = 0 # Old Voltage Value
-    Vs = 1 # Source Voltage
+    #Vs = 1 # Source Voltage
+    Vs = 7200 # Source Voltage
 
     while (1):
         outputArr = FWRsweep.FWR(outputArr, Vs)

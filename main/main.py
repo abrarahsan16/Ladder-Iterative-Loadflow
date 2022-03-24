@@ -16,7 +16,8 @@ if __name__ == '__main__':
     numpyConversion = readInput.to_numpy()
     checker = parser.checkIfAllTablesExist(readInput)
 
-    SBase = (parser.SBaseExtractor(numpyConversion)/(mth.sqrt(3)))*1000
+    #SBase = (parser.SBaseExtractor(numpyConversion)/(mth.sqrt(3)))*1000
+    SBase = (parser.SBaseExtractor(numpyConversion))
 
     if checker == False:
         raise ValueError("Excel does not contain Bus or Branch data, please double check and try again")
