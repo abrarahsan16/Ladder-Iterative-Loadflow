@@ -13,13 +13,13 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
     # outputArr[:,6] # Load current
     n = 0 # Number of iterations
     Vold = 0 # Old Voltage Value
-    #Vs = 1 # Source Voltage
-    Vs = 7200 # Source Voltage
+    Vs = 1 # Source Voltage
+    #Vs = 7200 # Source Voltage
 
     while (1):
-        outputArr = FWRsweep.FWR(outputArr, Vs)
-        Vl = outputArr[len(outputArr)-1, 4]
-        Err = ((abs(Vl.real - Vold.real))/Vs)
+        outputArr = FWRsweep.FWR(outputArr, Vs) # Run the forward sweep
+        Vl = outputArr[len(outputArr)-1, 4] # The last load on the radial system
+        Err = ((abs(Vl.real - Vold.real))/Vs) # Calculate the error in the end
         print("Error value after %s iteration : %f" %(n,Err))
         if Err.real<=Tol:
             print("Final Voltage value :\n%s" %outputArr[:, 4])
@@ -27,10 +27,10 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
             print("number of iterations : \n%d" %n)
             break
         else:
-            Vold = Vl
-            outputArr = BKWsweep.BKWsweep(busArr, outputArr)
+            Vold = Vl # Replace the old with the calculated load
+            outputArr = BKWsweep.BKWsweep(busArr, outputArr) # Run backward sweep
         n += 1
-        if n == 50:
+        if n == 50: # If the iteration exceeds 50 iterations, end run
             print("Failed to converge. Report has not been created")
             break
     '''

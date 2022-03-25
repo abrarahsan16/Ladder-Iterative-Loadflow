@@ -13,25 +13,25 @@ def checkIfAllTablesExist(arr):
 def extractData(npArr, txt):
 
     lenOfArray = npArr.shape[0] # Length of the array
-    widthOfArray = npArr.shape[1] #Width of the array
-    forLoopStartValue = int(np.where(npArr==txt)[0])+1 #The loop will start from the row after the specified text
+    widthOfArray = npArr.shape[1] # Width of the array
+    forLoopStartValue = int(np.where(npArr==txt)[0])+1 # The loop will start from the row after the specified text
     for i in range(forLoopStartValue, lenOfArray):
-        if npArr[i][0] == -999: #Loop ends when the -999 is found
-            newArray = npArr[forLoopStartValue:i]
+        if npArr[i][0] == -999: # Loop ends when the -999 is found
+            newArray = npArr[forLoopStartValue:i] # This the table extracted
             break
 
     if txt == "BUS DATA FOLLOWS":
         arrayToReturn = np.zeros((newArray.shape[0],4))
-        arrayToReturn[:,0] = newArray[:,0]
-        arrayToReturn[:,1] = newArray[:,7]
-        arrayToReturn[:,2] = newArray[:,8]
-        arrayToReturn[:,3] = newArray[:,11]
+        arrayToReturn[:,0] = newArray[:,0] # Bus number
+        arrayToReturn[:,1] = newArray[:,7] # P
+        arrayToReturn[:,2] = newArray[:,8] # Q
+        arrayToReturn[:,3] = newArray[:,11] # V Base
     elif txt == "BRANCH DATA FOLLOWS":
         arrayToReturn = np.zeros((newArray.shape[0],4))
-        arrayToReturn[:,0] = newArray[:,0]
-        arrayToReturn[:,1] = newArray[:,1]
-        arrayToReturn[:,2] = newArray[:,6]
-        arrayToReturn[:,3] = newArray[:,7]
+        arrayToReturn[:,0] = newArray[:,0] # From
+        arrayToReturn[:,1] = newArray[:,1] # To
+        arrayToReturn[:,2] = newArray[:,6] # R
+        arrayToReturn[:,3] = newArray[:,7] # X
         
     return arrayToReturn
 
@@ -43,7 +43,10 @@ def branchReorder(branchData):
     newBranchDataArr = np.zeros((newData.shape[0],4))
     n=0
     duplicateRan = False
-    for i in range(0, lenOfArray):
+    
+    i = 0
+    while i < lenOfArray:
+        
         dup = np.where(newData[:,0]==newData[i,0])
         if len(dup[0])==1 and (newData[i,4]==0):
             newBranchDataArr[n,0] = newData[i,0]
@@ -94,6 +97,8 @@ def branchReorder(branchData):
             newData[i,4] = 1
             n=n+1
             duplicateRan = False
+        
+        i = i + 1
     return newBranchDataArr
 
 def SBaseExtractor(arr):
