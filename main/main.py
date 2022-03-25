@@ -13,7 +13,7 @@ if __name__ == '__main__':
     event, cdfPath, tol = guiInit.gui_initial()
     '''
     cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\Datasets\IEEE 33 CDF (Updated)_2.xlsx"
-    tol = 0.001
+    tol = 0.00001
     readInput = pd.read_excel(cdfPath, header=None)
     
     numpyConversion = readInput.to_numpy()

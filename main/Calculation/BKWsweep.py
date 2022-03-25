@@ -6,8 +6,10 @@ def BKWsweep(busArr, inputArr):
   for i in range(len(inputArr)-1,-1,-1):
       busFinder = np.where(busArr[:, 0] == inputArr[i, 1])
       j = busFinder[0][0]
-      S = complex(busArr[j,1], busArr[j,2])
-      inputArr[i, 5] = ((S)/inputArr[i, 4]).conjugate()
+      S = complex(busArr[j,1], busArr[j, 2])
+      #inputArr[i, 5] = ((S)/(inputArr[i, 4]*mth.sqrt(3))).conjugate()
+      inputArr[i, 5] = ((S)/(inputArr[i, 4])).conjugate()
+      inputArr[i, 6] = 0
       #print(inputArr[i, 5])
 
   # Calculate the currents for each bus
