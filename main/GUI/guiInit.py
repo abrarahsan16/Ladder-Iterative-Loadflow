@@ -12,10 +12,8 @@ def gui_initial():
     window = sg.Window('Ladder Iterative Load Flow Calculator', layout)            #GUI heading
         
     while True:
-
-        
         event, values = window.read()
-        if(event =='Cancel'):
-            break                                                           # to be used to extract data by data parser.
+        if((event =='Cancel') or (values['tol'] == None)):
+            quit()                                                           # to be used to extract data by data parser.
         return event, values[0], float(values['tol'])       #Stored values of the excel file address and error tolerance
-        window.close()
+    window.close()
