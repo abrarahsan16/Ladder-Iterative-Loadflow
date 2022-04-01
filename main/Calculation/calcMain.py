@@ -23,7 +23,7 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
     # outputArr[:,4] # Voltage
     # outputArr[:,5] # Load Current
     # outputArr[:,6] # Current
-    print(outputArr)
+    #print(outputArr)
     n = 0 # Number of iterations
     Vold = 0 # Old Voltage Value
     Vs = 1 # Source Voltage
@@ -35,10 +35,8 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         Err = ((abs(Vl.real - Vold.real))/Vs) # Calculate the error in the end
         print("Error value after %s iteration : %f" %(n,Err))
         if Err.real<=Tol:
-            print("Final Voltage value :\n%s" %outputArr[:, 4])
-            print("Final Current value : \n%s" %outputArr[:, 6])
-            print("number of iterations : \n%d" %n)
-            break
+            return outputArr, n
+            #break
         else:
             Vold = Vl # Replace the old with the calculated load
             outputArr = BKWsweep.BKWsweep(busDataArr, outputArr) # Run backward sweep
