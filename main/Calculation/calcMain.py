@@ -20,6 +20,9 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
     outputArr[:,1] = branchArr[:,1] # To Node
     outputArr[:,2] = branchArr[:,2] # R
     outputArr[:,3] = branchArr[:,3] # X
+
+    # ErrorArr = []
+    
     # outputArr[:,4] # Voltage
     # outputArr[:,5] # Load Current
     # outputArr[:,6] # Current
@@ -33,8 +36,14 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         outputArr = FWRsweep.FWR(outputArr, Vs) # Run the forward sweep
         Vl = outputArr[len(outputArr)-1, 4] # The last load on the radial system
         Err = ((abs(Vl.real - Vold.real))/Vs) # Calculate the error in the end
+        # Append the Err to ErrorArr
         print("Error value after %s iteration : %f" %(n,Err))
         if Err.real<=Tol:
+            # Add power loss function
+            print("For bus %s, final voltage is %s \n" %(outputArr[:, 1], outputArr[:, 4]))
+            print("Final Voltage value :\n%s" %outputArr[:, 4])
+            print("Final Current value : \n%s" %outputArr[:, 6])
+            print("number of iterations : \n%d" %n)
             return outputArr, n
             #break
         else:

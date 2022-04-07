@@ -11,21 +11,22 @@ from Calculation import calcMain
 if __name__ == '__main__':
 
     
-    event, cdfPath, tol = guiInit.gui_initial()
+    #event, cdfPath, tol = guiInit.gui_initial()
     
-    #cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\Datasets\IEEE 33 CDF (Updated)_2.xlsx"
-    #tol = 0.0001
+    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\Datasets\IEEE 33 CDF (Updated)_2.xlsx"
+    tol = 0.0001
     readInput = pd.read_excel(cdfPath, header=None)
     
     numpyConversion = readInput.to_numpy()
     checker = parser.checkIfAllTablesExist(readInput)
-
-    #SBase = (parser.SBaseExtractor(numpyConversion)/(mth.sqrt(3)))*1000
-    SBase = (parser.SBaseExtractor(numpyConversion))
+    # Add the fuck off now
 
     if checker == False:
         raise ValueError("Excel does not contain Bus or Branch data, please double check and try again")
     
+    #SBase = (parser.SBaseExtractor(numpyConversion)/(mth.sqrt(3)))*1000
+    SBase = (parser.SBaseExtractor(numpyConversion))
+
     busData = parser.extractData(numpyConversion, "BUS DATA FOLLOWS")
     branchData = parser.extractData(numpyConversion, "BRANCH DATA FOLLOWS")
     VBase = busData[0, 3]
@@ -36,7 +37,7 @@ if __name__ == '__main__':
 
     outputArr, n = calcMain.calcMain(busData, sortedBranchData, float(tol), SBase, VBase)
     print("Output received")
-
+    '''
     # Create output dataframe
     outputDf = pd.DataFrame(outputArr)
     now = dt.now()
@@ -44,13 +45,14 @@ if __name__ == '__main__':
     dir_path = os.path.dirname(os.path.realpath(__file__))
     filePath = dir_path + ".\Output Folder"
     
+    
     # Creating Excel Writer Object from Pandas  
     writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')   
     workbook=writer.book
     worksheet=workbook.add_worksheet('Output')
     writer.sheets['Output'] = worksheet
     outputDf.to_excel(writer,sheet_name='Output',startrow=0 , startcol=0)  
-
+    '''
     #another_df.to_excel(writer,sheet_name='Validation',startrow=20, startcol=0) 
     #print("For bus %s, final voltage is %s \n" %(outputArr[:, 1], outputArr[:, 4]))
     #print("Final Voltage value :\n%s" %outputArr[:, 4])
