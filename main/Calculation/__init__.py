@@ -1,1 +1,1 @@
-__all__ = ["BKWsweep", "FWRsweep", "calcMain"]
+__all__ = ["BKWsweep", "FWRsweep", "calcMain", "LossEquation"]

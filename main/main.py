@@ -13,7 +13,7 @@ if __name__ == '__main__':
     
     #event, cdfPath, tol = guiInit.gui_initial()
     
-    cdfPath = "C:\\Users\\erzum\\Documents\\GitHub\\Ladder-Iterative-Loadflow\\Documentations\\Datasets\\IEEE 33 CDF (Updated)_2.xlsx"
+    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 33 CDF (Updated)_2.xlsx"
     tol = 0.0001
     readInput = pd.read_excel(cdfPath, header=None)
     
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     
     print("Table extraction complete")
 
-    outputArr, n = calcMain.calcMain(busData, sortedBranchData, float(tol), SBase, VBase)
+    outputArr, sLoss, Err = calcMain.calcMain(busData, sortedBranchData, float(tol), SBase, VBase)
     print("Output received")
     '''
     # Create output dataframe

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import math as mth
 import matplotlib.pyplot as plt
-from Calculation import FWRsweep, BKWsweep
+from Calculation import FWRsweep, BKWsweep, LossEquation
 
 def calcMain(busArr, branchArr, Tol, Sb, Vb):
     Sb = Sb
@@ -42,11 +42,13 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         print("Error value after %s iteration : %f" %(n,Err))
         if Err.real<=Tol:
             # Add power loss function
-            print("For bus %s, final voltage is %s \n" %(outputArr[:, 1], outputArr[:, 4]))
-            print("Final Voltage value :\n%s" %outputArr[:, 4])
-            print("Final Current value : \n%s" %outputArr[:, 6])
+            #print("From bus %s: \n" %(outputArr[:, 0]))
+            #print("To bus %s: \n" %(outputArr[:, 1]))
+            #print("Final Voltage value :\n%s" %outputArr[:, 4])
+            #print("Final Current value : \n%s" %outputArr[:, 6])
             print("number of iterations : \n%d" %n)
-            return outputArr, n
+            sLoss = LossEquation.LossEquation(outputArr, Sb)
+            return outputArr, sLoss, ErrorArr
             #break
         else:
             Vold = Vl # Replace the old with the calculated load
@@ -62,9 +64,6 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         if n == 50: # If the iteration exceeds 50 iterations, end run
             print("Failed to converge. Report has not been created")
             break
-    
-    
-   
     '''
     BU = busArr[:, 0] #Counts the number of buses
     
