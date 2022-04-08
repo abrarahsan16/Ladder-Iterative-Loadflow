@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import math as mth
+import matplotlib.pyplot as plt
 from Calculation import FWRsweep, BKWsweep
 
 def calcMain(busArr, branchArr, Tol, Sb, Vb):
@@ -21,8 +22,8 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
     outputArr[:,2] = branchArr[:,2] # R
     outputArr[:,3] = branchArr[:,3] # X
 
-    # ErrorArr = []
-    
+    ErrorArr = []
+    loop=[]
     # outputArr[:,4] # Voltage
     # outputArr[:,5] # Load Current
     # outputArr[:,6] # Current
@@ -37,6 +38,7 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         Vl = outputArr[len(outputArr)-1, 4] # The last load on the radial system
         Err = ((abs(Vl.real - Vold.real))/Vs) # Calculate the error in the end
         # Append the Err to ErrorArr
+        ErrorArr.append(Err)
         print("Error value after %s iteration : %f" %(n,Err))
         if Err.real<=Tol:
             # Add power loss function
@@ -50,9 +52,19 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
             Vold = Vl # Replace the old with the calculated load
             outputArr = BKWsweep.BKWsweep(busDataArr, outputArr) # Run backward sweep
         n += 1
+        loop.append(n)
+        plt.plot(ErrorArr, loop)
+        plt.title('Error Value per loop')
+        plt.xlabel('Iteration number')
+        plt.ylabel('Error Value')
+        plt.savefig('errorVal.png')
+
         if n == 50: # If the iteration exceeds 50 iterations, end run
             print("Failed to converge. Report has not been created")
             break
+    
+    
+   
     '''
     BU = busArr[:, 0] #Counts the number of buses
     
