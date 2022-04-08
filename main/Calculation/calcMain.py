@@ -53,7 +53,7 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
             outputArr = BKWsweep.BKWsweep(busDataArr, outputArr) # Run backward sweep
         n += 1
         loop.append(n)
-        plt.plot(ErrorArr, loop)
+        plt.plot(loop,ErrorArr)
         plt.title('Error Value per loop')
         plt.xlabel('Iteration number')
         plt.ylabel('Error Value')
