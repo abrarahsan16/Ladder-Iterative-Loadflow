@@ -12,12 +12,12 @@ if __name__ == '__main__':
     
     #event, cdfPath, tol = guiInit.gui_initial()
     dataParser = dataParser()
-    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 33 CDF (Updated)_2.xlsx"
+    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 69.xlsx"
     tol = 0.0001
     readInput = pd.read_excel(cdfPath, header=None)
     
     numpyConversion = readInput.to_numpy()
-    checker = dataParser.checkIfAllTablesExist(readInput)
+    checker = dataParser.checkIfAllTablesExist(numpyConversion)
 
     if checker == False:
         raise ValueError("Excel does not contain Bus or Branch data, please double check and try again")

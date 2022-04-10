@@ -7,8 +7,9 @@ from datetime import datetime as dt
 class dataParser():
     def checkIfAllTablesExist(self, arr):
         # Check if the excel file contains all the necessary tables
-        if "BUS DATA FOLLOWS" or "BRANCH DATA FOLLOWS" in arr:
-            return True
+        if "BUS DATA FOLLOWS" in arr:
+            if "BRANCH DATA FOLLOWS" in arr:
+                return True
         else:
             return False
 
@@ -113,7 +114,11 @@ class dataParser():
             raise ValueError("Header with SBase is missing")
         else:
             splitRyeString = RyeFinder.split(" ")
-            SBase = splitRyeString[4]
+            i = 3
+            SBase = splitRyeString[i]
+            while SBase == "":
+                i = i + 1
+                SBase = splitRyeString[i]
             return float(SBase)
     
     def dataExporter(self, branchData, outputArr, loss, Sb, Err):
