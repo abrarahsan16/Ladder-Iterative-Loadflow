@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import sys
-import os
+import os, subprocess
 from datetime import datetime as dt
 
 class dataParser():
@@ -118,68 +118,74 @@ class dataParser():
     
     def dataExporter(self, branchData, outputArr, loss, Sb, Err):
         # Initialize the arrays
-        voltageArr = np.zeros([outputArr.shape[0], 4])
+        voltageArr = np.zeros([outputArr.shape[0], 3])
         firstVoltageRow = np.zeros([1, voltageArr.shape[1]])
-        firstVoltageRow[0, 0:1] = 1
-        firstVoltageRow[0, 2] = 1
-        toFromArr = np.zeros([outputArr.shape[0], 3])
-        sLossArr = np.zeros([outputArr.shape[0], 3])
+        firstVoltageRow[0, 0] = 1
+        firstVoltageRow[0, 1] = 1
+        firstVoltageRow[0, 2] = 0
+        sLossArr = np.zeros([outputArr.shape[0], 4])
         
         # Calculate the PU voltage values
         voltageArr[:, 0] = np.real(outputArr[:, 1])
-        voltageArr[:, 1] = np.real(outputArr[:, 4]) # Real Voltage
-        voltageArr[:, 2] = np.imag(outputArr[:, 4]) # Imaginary Voltage
-        voltageArr[:, 3] = np.sqrt(np.square(voltageArr[:, 1]) + np.square(voltageArr[:, 2])) # Sqrt(Real^2+Imag^2)
+        voltageReal = np.real(outputArr[:, 4]) # Real Voltage
+        voltageImag = np.imag(outputArr[:, 4]) # Imaginary Voltage
+        voltageArr[:, 1] = np.sqrt(np.square(voltageReal) + np.square(voltageImag)) # Sqrt(Real^2+Imag^2)
+        voltageArr[:, 2] = np.arctan2(voltageImag, voltageReal) # arctan(Imag/Real)
         voltageArr = np.concatenate((firstVoltageRow, voltageArr), axis = 0)
+        sortedVoltageArr = voltageArr[voltageArr[:, 0].argsort()]
         #print(voltageArr)
 
         # Calculate the Loss in Per Units
-        sLossArr[:, 0] = np.real(loss[:, 0]) # Real Voltage
-        sLossArr[:, 1] = np.imag(loss[:, 0]) # Imaginary Voltage
-        sLossArr[:, 2] = np.sqrt(np.square(sLossArr[:, 0]) + np.square(sLossArr[:, 1])) # Sqrt(Real^2+Imag^2)        
-        #print(sLossArr)
+        sLossArr[:, 1] = np.real(loss[:, 0]) # Real Voltage
+        sLossArr[:, 2] = np.imag(loss[:, 0]) # Imaginary Voltage
+        sLossArr[:, 3] = np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2])) # Sqrt(Real^2+Imag^2)        
 
         # Convert from PU to real values in kW, kVar and kVA
         sLossArr = sLossArr * Sb * 1000
-        #print(sLossArr)
+        sLossArr[:, 0] = np.real(outputArr[:, 1])
+        sortedLossArr = sLossArr[sLossArr[:, 0].argsort()]
+        sortedWithoutBus = np.delete(sortedLossArr, 0, 1)
+
+        # Total Loss
+        sLossTotalArr = np.zeros([1, 3])
+        sLossTotalArr[0,0] = np.sum(sLossArr[:, 1])
+        sLossTotalArr[0,1] = np.sum(sLossArr[:, 2])
+        sLossTotalArr[0,2] = np.sum(sLossArr[:, 3])
+
+        # Create To-From List to append to sLoss
+        toFromList = []
+        for i in range(0, len(branchData)):
+            toAppend = str(branchData[i, 0].astype(np.int)) + " - " + str(branchData[i, 1].astype(np.int))
+            toFromList.append(toAppend)
+        
+        # Convert list to Panda
+        ToFromOut = pd.DataFrame(toFromList, columns = ['Bus Connection'])
 
         # Create all the output dataframes
-        voltageOut = pd.DataFrame(voltageArr)
-        voltageOut.columns = ['Bus', 'Real', 'Imaginary', 'Magnitude']
-        sLossOut = pd.DataFrame(sLossArr)
-        sLossOut.columns = ['Real', 'Imaginary', 'Apparent']
+        voltageOut = pd.DataFrame(sortedVoltageArr)
+        voltageOut.columns = ['Bus No', 'Voltage Magnitude (PU)', 'Voltage Angle']
+        sLossOut = pd.DataFrame(sortedWithoutBus)
+        sLossOut.columns = ['Real Loss (KW)', 'Reactive Power Loss (KVAR)', 'Apparent Loss (KVA)']
+        #print(finalsLossOut)
+        sTotalLossOut = pd.DataFrame(sLossTotalArr)
+        sTotalLossOut.columns = ['Total Real Losses (KW)', 'Total Reactive Losses (KVAR)', 'Total Apparent Losses (KVA)']
         errOut = pd.DataFrame({'Error Percentage': Err})
+        finalsLossOut = ToFromOut.join(sLossOut)
 
         # Create the name of the excel file
         now = dt.now()
         excelNameToSave = now.strftime("%d%m%Y %H%M")
         dir_path = os.path.dirname(os.path.dirname(__file__))
         filePath = dir_path + "\Output Folder"
-        #filePath = os.path.abspath(os.path.join(dir_path, "\Output Folder"))
-        #filePath = Path(dir_path).parents[0]
         
         writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')
 
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
-        sLossOut.to_excel(writer, sheet_name='Power Loss')
+        finalsLossOut.to_excel(writer, sheet_name='Line Power Loss')
+        sTotalLossOut.to_excel(writer, sheet_name='Total Power Loss')
         errOut.to_excel(writer, sheet_name='Error Percentages')
         writer.save()
 
         print("File Saved!")
-        '''
-        # Create output dataframe
-        outputDf = pd.DataFrame(outputArr)
-        now = dt.now()
-        excelNameToSave = now.strftime("%d%m%Y %H%M%S")
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        filePath = dir_path + ".\Output Folder"
-        
-        
-        # Creating Excel Writer Object from Pandas  
-        writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')   
-        workbook=writer.book
-        worksheet=workbook.add_worksheet('Output')
-        writer.sheets['Output'] = worksheet
-        outputDf.to_excel(writer,sheet_name='Output',startrow=0 , startcol=0)  
-        '''
-        raise NotImplementedError('Implement this function/method.')
+
+        #raise NotImplementedError('Implement this function/method.')
