@@ -36,7 +36,7 @@ if __name__ == '__main__':
     outputArr, sLoss, Err = calcMain.calcMain(busData, sortedBranchData, float(tol), SBase, VBase)
     print("Output received")
     
-    dataParser.dataExporter(outputArr, sLoss, SBase, Err)
+    dataParser.dataExporter(branchData, outputArr, sLoss, SBase, Err)
     
     #another_df.to_excel(writer,sheet_name='Validation',startrow=20, startcol=0) 
     #print("For bus %s, final voltage is %s \n" %(outputArr[:, 1], outputArr[:, 4]))

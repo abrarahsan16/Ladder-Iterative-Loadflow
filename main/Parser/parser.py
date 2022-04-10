@@ -116,18 +116,20 @@ class dataParser():
             SBase = splitRyeString[4]
             return float(SBase)
     
-    def dataExporter(self, outputArr, loss, Sb, Err):
-        voltageArr = np.zeros([outputArr.shape[0], 3])
+    def dataExporter(self, branchData, outputArr, loss, Sb, Err):
+        # Initialize the arrays
+        voltageArr = np.zeros([outputArr.shape[0], 4])
         firstVoltageRow = np.zeros([1, voltageArr.shape[1]])
-        firstVoltageRow[0, 0] = 1 
+        firstVoltageRow[0, 0:1] = 1
         firstVoltageRow[0, 2] = 1
         toFromArr = np.zeros([outputArr.shape[0], 3])
         sLossArr = np.zeros([outputArr.shape[0], 3])
         
         # Calculate the PU voltage values
-        voltageArr[:, 0] = np.real(outputArr[:, 4]) # Real Voltage
-        voltageArr[:, 1] = np.imag(outputArr[:, 4]) # Imaginary Voltage
-        voltageArr[:, 2] = np.sqrt(np.square(voltageArr[:, 0]) + np.square(voltageArr[:, 1])) # Sqrt(Real^2+Imag^2)
+        voltageArr[:, 0] = np.real(outputArr[:, 1])
+        voltageArr[:, 1] = np.real(outputArr[:, 4]) # Real Voltage
+        voltageArr[:, 2] = np.imag(outputArr[:, 4]) # Imaginary Voltage
+        voltageArr[:, 3] = np.sqrt(np.square(voltageArr[:, 1]) + np.square(voltageArr[:, 2])) # Sqrt(Real^2+Imag^2)
         voltageArr = np.concatenate((firstVoltageRow, voltageArr), axis = 0)
         #print(voltageArr)
 
@@ -143,14 +145,14 @@ class dataParser():
 
         # Create all the output dataframes
         voltageOut = pd.DataFrame(voltageArr)
-        voltageOut.columns = ['Real', 'Imaginary', 'Final']
+        voltageOut.columns = ['Bus', 'Real', 'Imaginary', 'Magnitude']
         sLossOut = pd.DataFrame(sLossArr)
         sLossOut.columns = ['Real', 'Imaginary', 'Apparent']
         errOut = pd.DataFrame({'Error Percentage': Err})
 
         # Create the name of the excel file
         now = dt.now()
-        excelNameToSave = now.strftime("%d%m%Y %H%M%S")
+        excelNameToSave = now.strftime("%d%m%Y %H%M")
         dir_path = os.path.dirname(os.path.dirname(__file__))
         filePath = dir_path + "\Output Folder"
         #filePath = os.path.abspath(os.path.join(dir_path, "\Output Folder"))
