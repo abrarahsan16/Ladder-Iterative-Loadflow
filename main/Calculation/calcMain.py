@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import math as mth
+import os
 import matplotlib.pyplot as plt
 from Calculation import FWRsweep, BKWsweep, LossEquation
 
@@ -61,7 +62,8 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         plt.title('Error Value per loop')
         plt.xlabel('Iteration number')
         plt.ylabel('Error Value')
-        plt.savefig('errorVal.png')
+        dir_path = os.path.dirname(os.path.dirname(__file__))
+        plt.savefig(dir_path+"\\"+'errorVal.png')
 
         if n == 50: # If the iteration exceeds 50 iterations, end run
             print("Failed to converge. Report has not been created")

@@ -199,6 +199,9 @@ class dataParser():
         excelNameToSave = now.strftime("%d%m%Y %H%M")
         dir_path = os.path.dirname(os.path.dirname(__file__))
         filePath = dir_path + "\Output Folder"
+
+        if not os.path.exists(filePath):
+            os.makedirs(filePath)
         
         writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')
 
