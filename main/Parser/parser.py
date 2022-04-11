@@ -228,19 +228,19 @@ class dataParser():
 
             
                 #Tab2 len = Len(voltage) - 1
-            if(i<=(len(voltage_mag)-1)):
+            if(i<(len(voltage_mag)-1)):
                 real_loss[i]=str(real_loss[i])
                 img_loss[i]=str(img_loss[i])
                 app_loss[i]=str(app_loss[i])
                 toFromList[i]=str(toFromList[i])
             #Tab3 Len = 1
-            if(i<=1):
+            if(i<1):
                 total_real_loss[i]=str(total_real_loss[i])
                 total_reactive_loss[i]=str(total_reactive_loss[i])
                 total_apparent_loss[i]=str(total_apparent_loss[i])
             
             #Tab5 len(err)
-            if(i<=(len(err_val))):
+            if(i<(len(err_val))):
                 err_val[i]=str(err_val[i])
                 loop[i]=str(loop[i])
             
@@ -265,6 +265,7 @@ class dataParser():
             #Tab5 Data
         err_val_arr=np.array(errOut)
         loop_arr=np.array(loop)
+        loop_arr = np.reshape(loop_arr,(loop_arr.shape[0],1))
 
         #Stacking voltage input,transposing it, and converting it 
             #Tab1 final data
@@ -273,7 +274,7 @@ class dataParser():
         volt_data_input=volt_data.tolist()
 
             #Tab2 final data
-        loss_data=np.stack((bus_arr,real_loss_arr,img_loss_arr,app_loss_arr))
+        loss_data=np.stack((toFromList,real_loss_arr,img_loss_arr,app_loss_arr))
         loss_data=np.transpose(loss_data)
         loss_data_input=loss_data.tolist()
 
@@ -288,73 +289,75 @@ class dataParser():
         err_data=np.stack((loop_arr,err_val_arr))
         err_data=np.transpose(err_data)
         err_data_input=err_data.tolist()
+        
+        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, err_data_input)
 
 
-        def Preview_Window():
-            #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
-            heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Angle']
-            heading_loss=['Bus', 'Reactive Power Loss (KVAR)','Apparent Loss (KVA)']
-            heading_total_loss=['Total Real Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Losses (KVA)']
-            heading_error=['Iteration Number', 'Error Percentage']
-            
-            
-        # layout=[
-        #       [sg.Table(values= volt_data_input, headings = heading_volt, max_col_width=35,
-        #                  auto_size_columns=True,
-        #                  display_row_numbers=True,
-        #                  justification='right',
-        #                  num_rows=10,
-        #                  key='-VOLT_TABLE-',
-        #                  row_height=35)]
-        #
-        #        ]
-            #start of tab code
-            tab1_layout =  [[sg.Table(values=volt_data_input, headings = heading_volt, max_col_width=35,
-                            auto_size_columns=True,
-                            display_row_numbers=True,
-                            justification='right',
-                            num_rows=10,
-                            key='-VOLT_TABLE-',
-                            row_height=35)]]    
+    def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, err_data_input):
+        #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
+        heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Angle']
+        heading_loss=['Bus', 'Reactive Power Loss (KVAR)','Apparent Loss (KVA)']
+        heading_total_loss=['Total Real Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Losses (KVA)']
+        heading_error=['Iteration Number', 'Error Percentage']
+        
+        
+    # layout=[
+    #       [sg.Table(values= volt_data_input, headings = heading_volt, max_col_width=35,
+    #                  auto_size_columns=True,
+    #                  display_row_numbers=True,
+    #                  justification='right',
+    #                  num_rows=10,
+    #                  key='-VOLT_TABLE-',
+    #                  row_height=35)]
+    #
+    #        ]
+        #start of tab code
+        tab1_layout =  [[sg.Table(values=volt_data_input, headings = heading_volt, max_col_width=35,
+                        auto_size_columns=True,
+                        display_row_numbers=True,
+                        justification='right',
+                        num_rows=10,
+                        key='-VOLT_TABLE-',
+                        row_height=35)]]    
 
-            tab2_layout = [[sg.Table(values=loss_data_input, headings = heading_loss, max_col_width=35,
-                            auto_size_columns=True,
-                            display_row_numbers=True,
-                            justification='right',
-                            num_rows=10,
-                            key='-LOSS_TABLE-',
-                            row_height=35)]]
-            
-            tab3_layout=[[sg.Table(values=total_loss_data_input, headings = heading_total_loss, max_col_width=35,
-                            auto_size_columns=True,
-                            display_row_numbers=True,
-                            justification='right',
-                            num_rows=10,
-                            key='-TOTAL_LOSS_TABLE--',
-                            row_height=35)]]
-            
-            #tab4_layout=[[]]
-            
-            tab5_layout=[[sg.Table(values=err_data_input, headings = heading_error, max_col_width=35,
-                            auto_size_columns=True,
-                            display_row_numbers=True,
-                            justification='right',
-                            num_rows=10,
-                            key='-ERROR_TABLE--',
-                            row_height=35)]]
+        tab2_layout = [[sg.Table(values=loss_data_input, headings = heading_loss, max_col_width=35,
+                        auto_size_columns=True,
+                        display_row_numbers=True,
+                        justification='right',
+                        num_rows=10,
+                        key='-LOSS_TABLE-',
+                        row_height=35)]]
+        
+        tab3_layout=[[sg.Table(values=total_loss_data_input, headings = heading_total_loss, max_col_width=35,
+                        auto_size_columns=True,
+                        display_row_numbers=True,
+                        justification='right',
+                        num_rows=10,
+                        key='-TOTAL_LOSS_TABLE--',
+                        row_height=35)]]
+        
+        #tab4_layout=[[]]
+        
+        tab5_layout=[[sg.Table(values=err_data_input, headings = heading_error, max_col_width=35,
+                        auto_size_columns=True,
+                        display_row_numbers=True,
+                        justification='right',
+                        num_rows=10,
+                        key='-ERROR_TABLE--',
+                        row_height=35)]]
 
-            layout = [[sg.TabGroup([[sg.Tab('Tab 1', tab1_layout, tooltip='tip'), sg.Tab('Tab 2', tab2_layout),sg.Tab('Tab 3', tab3_layout),sg.Tab('Tab 5', tab5_layout)]], tooltip='TIP2')],    
-                    [sg.Button('Open File')]]    
+        layout = [[sg.TabGroup([[sg.Tab('Tab 1', tab1_layout, tooltip='tip'), sg.Tab('Tab 2', tab2_layout),sg.Tab('Tab 3', tab3_layout),sg.Tab('Tab 5', tab5_layout)]], tooltip='TIP2')],    
+                [sg.Button('Open File')]]    
 
-            window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
+        window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
 
-            while True:    
-                event, values = window.read()    
-                print(event,values) 
+        while True:    
+            event, values = window.read()    
+            print(event,values) 
 
-                if event =='Open FIle':
-                    print("Beep Boop") 
-                if event == sg.WIN_CLOSED:           # always,  always give a way out!    
-                    break  
+            if event =='Open FIle':
+                print("Beep Boop") 
+            if event == sg.WIN_CLOSED:           # always,  always give a way out!    
+                break  
             #end of tab code
         #raise NotImplementedError('Implement this function/method.')

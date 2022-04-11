@@ -47,6 +47,8 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
             #print("Final Voltage value :\n%s" %outputArr[:, 4])
             #print("Final Current value : \n%s" %outputArr[:, 6])
             print("number of iterations : \n%d" %n)
+            n += 1
+            loop.append(n)
             sLoss = LossEquation.LossEquation(outputArr, Sb)
             return outputArr, sLoss, ErrorArr,loop
             #break

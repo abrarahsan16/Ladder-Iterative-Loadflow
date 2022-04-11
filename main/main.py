@@ -38,6 +38,7 @@ if __name__ == '__main__':
     
     dataParser.dataExporter(branchData, outputArr, sLoss, SBase, Err,loop)
     
+
     #another_df.to_excel(writer,sheet_name='Validation',startrow=20, startcol=0) 
     #print("For bus %s, final voltage is %s \n" %(outputArr[:, 1], outputArr[:, 4]))
     #print("Final Voltage value :\n%s" %outputArr[:, 4])
