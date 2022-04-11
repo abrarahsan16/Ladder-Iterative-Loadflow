@@ -129,6 +129,10 @@ class dataParser():
         firstVoltageRow[0, 1] = 1
         firstVoltageRow[0, 2] = 0
         sLossArr = np.zeros([outputArr.shape[0], 4])
+        powerInjection = np.zeros([outputArr.shape[0], 2], dtype=np.complex_)
+        firstPowerInjectionRow = np.zeros([1, powerInjection.shape[1]], dtype=np.complex_)
+        firstPowerInjectionRow[0, 0] = 1
+        firstPowerInjectionRow[0, 1] = np.conjugate(outputArr[0, 6]) * 1 * Sb * 1000
         
         # Calculate the PU voltage values
         voltageArr[:, 0] = np.real(outputArr[:, 1])
@@ -138,11 +142,10 @@ class dataParser():
         voltageArr[:, 2] = np.arctan2(voltageImag, voltageReal) # arctan(Imag/Real)
         voltageArr = np.concatenate((firstVoltageRow, voltageArr), axis = 0)
         sortedVoltageArr = voltageArr[voltageArr[:, 0].argsort()]
-        #print(voltageArr)
 
         # Calculate the Loss in Per Units
-        sLossArr[:, 1] = np.real(loss[:, 0]) # Real Voltage
-        sLossArr[:, 2] = np.imag(loss[:, 0]) # Imaginary Voltage
+        sLossArr[:, 1] = np.real(loss[:, 0]) # Real Power
+        sLossArr[:, 2] = np.imag(loss[:, 0]) # Imaginary Power
         sLossArr[:, 3] = np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2])) # Sqrt(Real^2+Imag^2)        
 
         # Convert from PU to real values in kW, kVar and kVA
@@ -150,6 +153,19 @@ class dataParser():
         sLossArr[:, 0] = np.real(outputArr[:, 1])
         sortedLossArr = sLossArr[sLossArr[:, 0].argsort()]
         sortedWithoutBus = np.delete(sortedLossArr, 0, 1)
+
+        # Calculate power injection for each bus
+        powerInjectionV = outputArr[:, 4]
+        powerInjectionI = outputArr[:, 6]
+        powerInjection[:, 1] = (powerInjectionV * np.conjugate(powerInjectionI)) * Sb * 1000
+        powerInjection[:, 0] = np.real(outputArr[:, 1])
+        powerInjection = np.concatenate((firstPowerInjectionRow, powerInjection), axis = 0)
+        sortedpowerInjection = powerInjection[powerInjection[:, 0].argsort()]
+        sPowerInjection = np.zeros((sortedpowerInjection.shape[0], 4))
+        sPowerInjection[:, 0] = np.real(sortedpowerInjection[: ,0])
+        sPowerInjection[:, 1] = np.real(sortedpowerInjection[:, 1]) # Real Power
+        sPowerInjection[:, 2] = np.imag(sortedpowerInjection[:, 1]) # Imaginary Power
+        sPowerInjection[:, 3] = np.sqrt(np.square(sPowerInjection[:, 1]) + np.square(sPowerInjection[:, 2])) # Sqrt(Real^2+Imag^2)
 
         # Total Loss
         sLossTotalArr = np.zeros([1, 3])
@@ -170,10 +186,11 @@ class dataParser():
         voltageOut = pd.DataFrame(sortedVoltageArr)
         voltageOut.columns = ['Bus No', 'Voltage Magnitude (PU)', 'Voltage Angle']
         sLossOut = pd.DataFrame(sortedWithoutBus)
-        sLossOut.columns = ['Real Loss (KW)', 'Reactive Power Loss (KVAR)', 'Apparent Loss (KVA)']
-        #print(finalsLossOut)
+        sLossOut.columns = ['Real Power Loss (KW)', 'Reactive Power Loss (KVAR)', 'Apparent Power Loss (KVA)']
+        sinjectionOut = pd.DataFrame(sPowerInjection)
+        sinjectionOut.columns = ['Bus No', 'Real Power Injection (KW)', 'Reactive Power Injection (KVAR)', 'Apparent Power Injection (KVA)']
         sTotalLossOut = pd.DataFrame(sLossTotalArr)
-        sTotalLossOut.columns = ['Total Real Losses (KW)', 'Total Reactive Losses (KVAR)', 'Total Apparent Losses (KVA)']
+        sTotalLossOut.columns = ['Total Real Power Losses (KW)', 'Total Reactive Power Losses (KVAR)', 'Total Apparent Power Losses (KVA)']
         errOut = pd.DataFrame({'Error Percentage': Err})
         finalsLossOut = ToFromOut.join(sLossOut)
 
@@ -187,6 +204,7 @@ class dataParser():
 
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
         finalsLossOut.to_excel(writer, sheet_name='Line Power Loss')
+        sinjectionOut.to_excel(writer, sheet_name='Power Injection')
         sTotalLossOut.to_excel(writer, sheet_name='Total Power Loss')
         errOut.to_excel(writer, sheet_name='Error Percentage')
         writer.save()
@@ -203,14 +221,14 @@ class dataParser():
         voltage_angle=voltageOut['Voltage Angle'].tolist()
 
         #Tab 2: bus, real line loss, reactive line loss, apparent line loss
-        real_loss=finalsLossOut['Real Loss (KW)'].tolist()
+        real_loss=finalsLossOut['Real Power Loss (KW)'].tolist()
         img_loss=finalsLossOut['Reactive Power Loss (KVAR)'].tolist()
-        app_loss=finalsLossOut['Apparent Loss (KVA)'].tolist()
+        app_loss=finalsLossOut['Apparent Power Loss (KVA)'].tolist()
 
         #Tab 3: total loss- real, reactive apparent line loss
-        total_real_loss=sTotalLossOut['Total Real Losses (KW)'].tolist()
-        total_reactive_loss=sTotalLossOut['Total Reactive Losses (KVAR)'].tolist()
-        total_apparent_loss=sTotalLossOut['Total Apparent Losses (KVA)'].tolist()
+        total_real_loss=sTotalLossOut['Total Real Power Losses (KW)'].tolist()
+        total_reactive_loss=sTotalLossOut['Total Reactive Power Losses (KVAR)'].tolist()
+        total_apparent_loss=sTotalLossOut['Total Apparent Power Losses (KVA)'].tolist()
         #Tab 4: power injection
 
         #Tab 5: Error- iteration number, error percentages
@@ -263,9 +281,11 @@ class dataParser():
             #Tab4 Data
             
             #Tab5 Data
-        err_val_arr=np.array(errOut)
+        err_val_arr = np.reshape(np.array(errOut), (len(errOut)))
+        #err_val_arr=np.array(errOut)
+        #loop_arr[:,0] = loop
         loop_arr=np.array(loop)
-        loop_arr = np.reshape(loop_arr,(loop_arr.shape[0],1))
+        #loop_arr = np.reshape(loop_arr,(loop_arr.shape[0],1))
 
         #Stacking voltage input,transposing it, and converting it 
             #Tab1 final data
@@ -290,17 +310,17 @@ class dataParser():
         err_data=np.transpose(err_data)
         err_data_input=err_data.tolist()
         
-        print(loop_arr)
-        print(err_data_input)
-        print(app_loss_arr)
+        #print(loop_arr)
+        #print(err_data_input)
+        #print(app_loss_arr)
         self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, err_data_input)
 
 
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, err_data_input):
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
         heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Angle']
-        heading_loss=['Bus', 'Reactive Power Loss (KVAR)','Apparent Loss (KVA)']
-        heading_total_loss=['Total Real Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Losses (KVA)']
+        heading_loss=['Bus', 'Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
+        heading_total_loss=['Total Real Power Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Power Losses (KVA)']
         heading_error=['Iteration Number', 'Error Percentage']
         
         
