@@ -226,19 +226,23 @@ class dataParser():
             voltage_angle[i]=str(voltage_angle[i])
             #Tab4 len = Len(voltage)
 
-            #Tab2 len = Len(voltage) - 1
-            real_loss[i]=str(real_loss[i])
-            img_loss[i]=str(img_loss[i])
-            app_loss[i]=str(app_loss[i])
-            toFromList[i]=str(toFromList[i])
+            
+                #Tab2 len = Len(voltage) - 1
+            if(i<=(len(voltage_mag)-1)):
+                real_loss[i]=str(real_loss[i])
+                img_loss[i]=str(img_loss[i])
+                app_loss[i]=str(app_loss[i])
+                toFromList[i]=str(toFromList[i])
             #Tab3 Len = 1
-            total_real_loss[i]=str(total_real_loss[i])
-            total_reactive_loss[i]=str(total_reactive_loss[i])
-            total_apparent_loss[i]=str(total_apparent_loss[i])
+            if(i<=1):
+                total_real_loss[i]=str(total_real_loss[i])
+                total_reactive_loss[i]=str(total_reactive_loss[i])
+                total_apparent_loss[i]=str(total_apparent_loss[i])
             
             #Tab5 len(err)
-            err_val[i]=str(err_val[i])
-            loop[i]=str(loop[i])
+            if(i<=(len(err_val))):
+                err_val[i]=str(err_val[i])
+                loop[i]=str(loop[i])
             
         #Convering string list to numpy array
             #Tab1 Data
