@@ -229,7 +229,12 @@ class dataParser():
         total_real_loss=sTotalLossOut['Total Real Power Losses (KW)'].tolist()
         total_reactive_loss=sTotalLossOut['Total Reactive Power Losses (KVAR)'].tolist()
         total_apparent_loss=sTotalLossOut['Total Apparent Power Losses (KVA)'].tolist()
+        
         #Tab 4: power injection
+        injected_bus=sinjectionOut['Bus No'].tolist()
+        injected_real=sinjectionOut['Real Power Injection (KW)'].tolist()
+        injected_reactive=sinjectionOut['Reactive Power Injection (KVAR)'].tolist()
+        injected_apparent=sinjectionOut['Apparent Power Injection (KVA)'].tolist()
 
         #Tab 5: Error- iteration number, error percentages
         err_val=errOut['Error Percentage'].tolist()
@@ -242,8 +247,12 @@ class dataParser():
             bus[i]=str(bus[i])
             voltage_mag[i]=str(voltage_mag[i])
             voltage_angle[i]=str(voltage_angle[i])
+            
             #Tab4 len = Len(voltage)
-
+            injected_bus[i]=str(injected_bus[i])
+            injected_real[i]=str(injected_real[i])
+            injected_reactive[i]=str(injected_reactive[i])
+            injected_apparent[i]=str(injected_apparent[i])
             
                 #Tab2 len = Len(voltage) - 1
             if(i<(len(voltage_mag)-1)):
@@ -279,7 +288,11 @@ class dataParser():
         total_apparent_loss_arr=np.array(total_apparent_loss)
             
             #Tab4 Data
-            
+        injected_bus_arr=np.array(injected_bus)
+        injected_real_arr=np.array(injected_real)
+        injected_reactive_arr=np.array(injected_reactive)
+        injected_apparent_arr=np.array(injected_apparent)
+
             #Tab5 Data
         err_val_arr = np.reshape(np.array(errOut), (len(errOut)))
         #err_val_arr=np.array(errOut)
@@ -304,7 +317,9 @@ class dataParser():
         total_loss_data_input=total_loss_data.tolist()
         
             #Tab4 final data
-            
+        injected_data=np.stack(injected_bus_arr,injected_real_arr,injected_reactive_arr,injected_apparent_arr)
+        injected_data=np.transpose(injected_data)
+        injected_data_input=injected_data.tolist() 
             #Tab5 final data
         err_data=np.stack((loop_arr,err_val_arr))
         err_data=np.transpose(err_data)
@@ -313,14 +328,15 @@ class dataParser():
         #print(loop_arr)
         #print(err_data_input)
         #print(app_loss_arr)
-        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, err_data_input)
+        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, injected_data_input,err_data_input)
 
 
-    def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, err_data_input):
+    def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
         heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Angle']
-        heading_loss=['Bus', 'Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
+        heading_loss=['Bus', 'Real Power Loss (KW)','Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
         heading_total_loss=['Total Real Power Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Power Losses (KVA)']
+        heading_injection=['Bus No','Real Power Injection (KW)','Reactive Power Injection (KVAR)','Apparent Power Injection (KVA)']
         heading_error=['Iteration Number', 'Error Percentage']
         
         
@@ -359,7 +375,13 @@ class dataParser():
                         key='-TOTAL_LOSS_TABLE--',
                         row_height=35)]]
         
-        #tab4_layout=[[]]
+        tab4_layout=[[sg.Table(values=injected_data_input, headings = heading_injection, max_col_width=35,
+                        auto_size_columns=True,
+                        display_row_numbers=True,
+                        justification='center',
+                        num_rows=10,
+                        key='-TOTAL_LOSS_TABLE--',
+                        row_height=35)]]
         
         tab5_layout=[[sg.Table(values=err_data_input, headings = heading_error, max_col_width=35,
                         auto_size_columns=True,
@@ -369,7 +391,7 @@ class dataParser():
                         key='-ERROR_TABLE--',
                         row_height=35)]]
 
-        layout = [[sg.TabGroup([[sg.Tab('Tab 1', tab1_layout, tooltip='tip'), sg.Tab('Tab 2', tab2_layout),sg.Tab('Tab 3', tab3_layout),sg.Tab('Tab 5', tab5_layout)]], tooltip='TIP2')],    
+        layout = [[sg.TabGroup([[sg.Tab('Tab 1', tab1_layout, tooltip='tip'), sg.Tab('Tab 2', tab2_layout),sg.Tab('Tab 3', tab3_layout),sg.Tab('Tab 4', tab4_layout),sg.Tab('Tab 5', tab5_layout)]], tooltip='TIP2')],    
                 [sg.Button('Open File')]]    
 
         window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
