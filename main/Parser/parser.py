@@ -217,12 +217,13 @@ class dataParser():
         print("File Saved!")
 
 
-'''
+
         #Creating Tab 1 (Bus, Voltage, Voltage Angle)
         #Tab1 data
         bus=voltageOut['Bus No'].tolist()
         voltage_mag=voltageOut['Voltage Magnitude (PU)'].tolist()
-        voltage_angle=voltageOut['Voltage Angle'].tolist()
+        voltage_mag_v=voltageOut['Voltage Magnitude (V)'].tolist()
+        voltage_angle=voltageOut['Voltage Angle (Degree)'].tolist()
 
         #Tab 2: bus, real line loss, reactive line loss, apparent line loss
         real_loss=finalsLossOut['Real Power Loss (KW)'].tolist()
@@ -251,6 +252,7 @@ class dataParser():
             bus[i]=str(bus[i])
             voltage_mag[i]=str(voltage_mag[i])
             voltage_angle[i]=str(voltage_angle[i])
+            voltage_mag_v[i]=str(voltage_mag_v[i])
             
             #Tab4 len = Len(voltage)
             injected_bus[i]=str(injected_bus[i])
@@ -279,6 +281,7 @@ class dataParser():
             #Tab1 Data
         bus_arr=np.array(bus)
         volt_mag=np.array(voltage_mag)
+        volt_mag_v=np.array(voltage_mag_v)
         volt_angle=np.array(voltage_angle)
 
             #Tab2 Data
@@ -306,7 +309,7 @@ class dataParser():
 
         #Stacking voltage input,transposing it, and converting it 
             #Tab1 final data
-        volt_data=np.stack((bus_arr,volt_mag,volt_angle))
+        volt_data=np.stack((bus_arr,volt_mag,volt_mag_v,volt_angle))
         volt_data=np.transpose(volt_data)
         volt_data_input=volt_data.tolist()
 
@@ -337,7 +340,7 @@ class dataParser():
 
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
-        heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Angle']
+        heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)','Voltage Angle (Degree)']
         heading_loss=['Bus', 'Real Power Loss (KW)','Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
         heading_total_loss=['Total Real Power Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Power Losses (KVA)']
         heading_injection=['Bus No','Real Power Injection (KW)','Reactive Power Injection (KVAR)','Apparent Power Injection (KVA)']
@@ -410,4 +413,4 @@ class dataParser():
                 break  
             #end of tab code
         #raise NotImplementedError('Implement this function/method.')
-        '''
+        
