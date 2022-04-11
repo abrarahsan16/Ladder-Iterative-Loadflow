@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import os, subprocess
 from datetime import datetime as dt
-
+import PySimpleGUI as sg
 class dataParser():
     def checkIfAllTablesExist(self, arr):
         # Check if the excel file contains all the necessary tables
@@ -121,7 +121,7 @@ class dataParser():
                 SBase = splitRyeString[i]
             return float(SBase)
     
-    def dataExporter(self, branchData, outputArr, loss, Sb, Err):
+    def dataExporter(self, branchData, outputArr, loss, Sb, Err,loop):
         # Initialize the arrays
         voltageArr = np.zeros([outputArr.shape[0], 3])
         firstVoltageRow = np.zeros([1, voltageArr.shape[1]])
@@ -193,4 +193,163 @@ class dataParser():
 
         print("File Saved!")
 
+
+
+
+        #Creating Tab 1 (Bus, Voltage, Voltage Angle)
+        #Tab1 data
+        bus=voltageOut['Bus No'].tolist()
+        voltage_mag=voltageOut['Voltage Magnitude (PU)'].tolist()
+        voltage_angle=voltageOut['Voltage Angle'].tolist()
+
+        #Tab 2: bus, real line loss, reactive line loss, apparent line loss
+        real_loss=finalsLossOut['Real Loss (KW)'].tolist()
+        img_loss=finalsLossOut['Reactive Power Loss (KVAR)'].tolist()
+        app_loss=finalsLossOut['Apparent Loss (KVA)'].tolist()
+
+        #Tab 3: total loss- real, reactive apparent line loss
+        total_real_loss=sTotalLossOut['Total Real Losses (KW)'].tolist()
+        total_reactive_loss=sTotalLossOut['Total Reactive Losses (KVAR)'].tolist()
+        total_apparent_loss=sTotalLossOut['Total Apparent Losses (KVA)'].tolist()
+        #Tab 4: power injection
+
+        #Tab 5: Error- iteration number, error percentages
+        err_val=errOut['Error Percentages'].tolist()
+            #call loop for iteration number (variable in calcMain)
+        loop
+
+        #Converting Data inside lists to string
+        for i in range(len(voltage_mag)):
+            #Tab1
+            bus[i]=str(bus[i])
+            voltage_mag[i]=str(voltage_mag[i])
+            voltage_angle[i]=str(voltage_angle[i])
+            #Tab2
+            real_loss[i]=str(real_loss[i])
+            img_loss[i]=str(img_loss[i])
+            app_loss[i]=str(app_loss[i])
+            toFromList[i]=str(toFromList[i])
+            #Tab3
+            total_real_loss[i]=str(total_real_loss[i])
+            total_reactive_loss[i]=str(total_reactive_loss[i])
+            total_apparent_loss[i]=str(total_apparent_loss[i])
+            #Tab4
+            
+            #Tab5
+            err_val[i]=str(err_val[i])
+            loop[i]=str(loop[i])
+            
+        #Convering string list to numpy array
+            #Tab1 Data
+        bus_arr=np.array(bus)
+        volt_mag=np.array(voltage_mag)
+        volt_angle=np.array(voltage_angle)
+
+            #Tab2 Data
+        real_loss_arr=np.array(real_loss)
+        img_loss_arr=np.array(img_loss)
+        app_loss_arr=np.array(app_loss)
+
+            #Tab3 Data
+        total_real_loss_arr=np.array(total_real_loss)
+        total_reactive_loss_arr=np.array(total_reactive_loss)
+        total_apparent_loss_arr=np.array(total_apparent_loss)
+            
+            #Tab4 Data
+            
+            #Tab5 Data
+        err_val_arr=np.array(errOut)
+        loop_arr=np.array(loop)
+
+        #Stacking voltage input,transposing it, and converting it 
+            #Tab1 final data
+        volt_data=np.stack((bus_arr,volt_mag,volt_angle))
+        volt_data=np.transpose(volt_data)
+        volt_data_input=volt_data.tolist()
+
+            #Tab2 final data
+        loss_data=np.stack((bus_arr,real_loss_arr,img_loss_arr,app_loss_arr))
+        loss_data=np.transpose(loss_data)
+        loss_data_input=loss_data.tolist()
+
+            #Tab3 final data
+        total_loss_data=np.stack((total_real_loss_arr,total_reactive_loss,total_apparent_loss))
+        total_loss_data=np.transpose(total_loss_data)
+        total_loss_data_input=total_loss_data.tolist()
+
+            #Tab4 final data
+            
+            #Tab5 final data
+        err_data=np.stack((loop_arr,err_val_arr))
+        err_data=np.transpose(err_data)
+        err_data_input=err_data.tolist()
+
+
+        def Preview_Window():
+            #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
+            heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Angle']
+            heading_loss=['Bus', 'Reactive Power Loss (KVAR)','Apparent Loss (KVA)']
+            heading_total_loss=['Total Real Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Losses (KVA)']
+            heading_error=['Iteration Number', 'Error Percentage']
+            
+            
+        # layout=[
+        #       [sg.Table(values= volt_data_input, headings = heading_volt, max_col_width=35,
+        #                  auto_size_columns=True,
+        #                  display_row_numbers=True,
+        #                  justification='right',
+        #                  num_rows=10,
+        #                  key='-VOLT_TABLE-',
+        #                  row_height=35)]
+        #
+        #        ]
+            #start of tab code
+            tab1_layout =  [[sg.Table(values=volt_data_input, headings = heading_volt, max_col_width=35,
+                            auto_size_columns=True,
+                            display_row_numbers=True,
+                            justification='right',
+                            num_rows=10,
+                            key='-VOLT_TABLE-',
+                            row_height=35)]]    
+
+            tab2_layout = [[sg.Table(values=loss_data_input, headings = heading_loss, max_col_width=35,
+                            auto_size_columns=True,
+                            display_row_numbers=True,
+                            justification='right',
+                            num_rows=10,
+                            key='-LOSS_TABLE-',
+                            row_height=35)]]
+            
+            tab3_layout=[[sg.Table(values=total_loss_data_input, headings = heading_total_loss, max_col_width=35,
+                            auto_size_columns=True,
+                            display_row_numbers=True,
+                            justification='right',
+                            num_rows=10,
+                            key='-TOTAL_LOSS_TABLE--',
+                            row_height=35)]]
+            
+            #tab4_layout=[[]]
+            
+            tab5_layout=[[sg.Table(values=err_data_input, headings = heading_error, max_col_width=35,
+                            auto_size_columns=True,
+                            display_row_numbers=True,
+                            justification='right',
+                            num_rows=10,
+                            key='-ERROR_TABLE--',
+                            row_height=35)]]
+
+            layout = [[sg.TabGroup([[sg.Tab('Tab 1', tab1_layout, tooltip='tip'), sg.Tab('Tab 2', tab2_layout),sg.Tab('Tab 3', tab3_layout),sg.Tab('Tab 5', tab5_layout)]], tooltip='TIP2')],    
+                    [sg.Button('Open File')]]    
+
+            window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
+
+            while True:    
+                event, values = window.read()    
+                print(event,values) 
+
+                if event =='Open FIle':
+                    print("Beep Boop") 
+                if event == sg.WIN_CLOSED:           # always,  always give a way out!    
+                    break  
+            #end of tab code
         #raise NotImplementedError('Implement this function/method.')

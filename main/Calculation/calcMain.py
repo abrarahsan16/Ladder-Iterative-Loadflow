@@ -48,7 +48,7 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
             #print("Final Current value : \n%s" %outputArr[:, 6])
             print("number of iterations : \n%d" %n)
             sLoss = LossEquation.LossEquation(outputArr, Sb)
-            return outputArr, sLoss, ErrorArr
+            return outputArr, sLoss, ErrorArr,loop
             #break
         else:
             Vold = Vl # Replace the old with the calculated load

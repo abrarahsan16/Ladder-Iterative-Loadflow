@@ -12,7 +12,7 @@ if __name__ == '__main__':
     
     #event, cdfPath, tol = guiInit.gui_initial()
     dataParser = dataParser()
-    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 69.xlsx"
+    cdfPath = "C:\\Users\\erzum\\Documents\\GitHub\\Ladder-Iterative-Loadflow\\Documentations\\Datasets\\IEEE 33 CDF (Updated)_2.xlsx"
     tol = 0.0001
     readInput = pd.read_excel(cdfPath, header=None)
     
@@ -33,10 +33,10 @@ if __name__ == '__main__':
     
     print("Table extraction complete")
 
-    outputArr, sLoss, Err = calcMain.calcMain(busData, sortedBranchData, float(tol), SBase, VBase)
+    outputArr, sLoss, Err,loop = calcMain.calcMain(busData, sortedBranchData, float(tol), SBase, VBase)
     print("Output received")
     
-    dataParser.dataExporter(branchData, outputArr, sLoss, SBase, Err)
+    dataParser.dataExporter(branchData, outputArr, sLoss, SBase, Err,loop)
     
     #another_df.to_excel(writer,sheet_name='Validation',startrow=20, startcol=0) 
     #print("For bus %s, final voltage is %s \n" %(outputArr[:, 1], outputArr[:, 4]))
