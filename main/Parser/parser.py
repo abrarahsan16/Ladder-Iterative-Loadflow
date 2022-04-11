@@ -121,13 +121,14 @@ class dataParser():
                 SBase = splitRyeString[i]
             return float(SBase)
     
-    def dataExporter(self, branchData, outputArr, loss, Sb, Err,loop):
+    def dataExporter(self, branchData, outputArr, loss, Sb, Vb, Err, loop):
         # Initialize the arrays
-        voltageArr = np.zeros([outputArr.shape[0], 3])
+        voltageArr = np.zeros([outputArr.shape[0], 4])
         firstVoltageRow = np.zeros([1, voltageArr.shape[1]])
         firstVoltageRow[0, 0] = 1
         firstVoltageRow[0, 1] = 1
-        firstVoltageRow[0, 2] = 0
+        firstVoltageRow[0, 2] = 1 * Vb
+        firstVoltageRow[0, 3] = 0
         sLossArr = np.zeros([outputArr.shape[0], 4])
         powerInjection = np.zeros([outputArr.shape[0], 2], dtype=np.complex_)
         firstPowerInjectionRow = np.zeros([1, powerInjection.shape[1]], dtype=np.complex_)
@@ -139,7 +140,8 @@ class dataParser():
         voltageReal = np.real(outputArr[:, 4]) # Real Voltage
         voltageImag = np.imag(outputArr[:, 4]) # Imaginary Voltage
         voltageArr[:, 1] = np.sqrt(np.square(voltageReal) + np.square(voltageImag)) # Sqrt(Real^2+Imag^2)
-        voltageArr[:, 2] = np.arctan2(voltageImag, voltageReal) # arctan(Imag/Real)
+        voltageArr[:, 2] = voltageArr[:, 1] * Vb
+        voltageArr[:, 3] = np.arctan2(voltageImag, voltageReal) * (180/np.pi) # arctan(Imag/Real)
         voltageArr = np.concatenate((firstVoltageRow, voltageArr), axis = 0)
         sortedVoltageArr = voltageArr[voltageArr[:, 0].argsort()]
 
@@ -184,7 +186,7 @@ class dataParser():
 
         # Create all the output dataframes
         voltageOut = pd.DataFrame(sortedVoltageArr)
-        voltageOut.columns = ['Bus No', 'Voltage Magnitude (PU)', 'Voltage Angle']
+        voltageOut.columns = ['Bus No', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)', 'Voltage Angle (Degree)']
         sLossOut = pd.DataFrame(sortedWithoutBus)
         sLossOut.columns = ['Real Power Loss (KW)', 'Reactive Power Loss (KVAR)', 'Apparent Power Loss (KVA)']
         sinjectionOut = pd.DataFrame(sPowerInjection)
@@ -208,15 +210,14 @@ class dataParser():
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
         finalsLossOut.to_excel(writer, sheet_name='Line Power Loss')
         sinjectionOut.to_excel(writer, sheet_name='Power Injection')
-        sTotalLossOut.to_excel(writer, sheet_name='Total Power Loss')
+        sTotalLossOut.to_excel(writer, sheet_name='Line Power Loss', startrow=finalsLossOut.shape[0] + 1, startcol=1)
         errOut.to_excel(writer, sheet_name='Error Percentage')
         writer.save()
 
         print("File Saved!")
 
 
-
-
+'''
         #Creating Tab 1 (Bus, Voltage, Voltage Angle)
         #Tab1 data
         bus=voltageOut['Bus No'].tolist()
@@ -409,3 +410,4 @@ class dataParser():
                 break  
             #end of tab code
         #raise NotImplementedError('Implement this function/method.')
+        '''
