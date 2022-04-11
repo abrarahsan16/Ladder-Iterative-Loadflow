@@ -12,7 +12,7 @@ if __name__ == '__main__':
     
     #event, cdfPath, tol = guiInit.gui_initial()
     dataParser = dataParser()
-    cdfPath = "C:\\Users\\erzum\\Documents\\GitHub\\Ladder-Iterative-Loadflow\\Documentations\\Datasets\\IEEE 33 CDF (Updated)_2.xlsx"
+    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 69.xlsx"
     tol = 0.0001
     readInput = pd.read_excel(cdfPath, header=None)
     

@@ -188,7 +188,7 @@ class dataParser():
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
         finalsLossOut.to_excel(writer, sheet_name='Line Power Loss')
         sTotalLossOut.to_excel(writer, sheet_name='Total Power Loss')
-        errOut.to_excel(writer, sheet_name='Error Percentages')
+        errOut.to_excel(writer, sheet_name='Error Percentage')
         writer.save()
 
         print("File Saved!")
@@ -214,28 +214,29 @@ class dataParser():
         #Tab 4: power injection
 
         #Tab 5: Error- iteration number, error percentages
-        err_val=errOut['Error Percentages'].tolist()
+        err_val=errOut['Error Percentage'].tolist()
             #call loop for iteration number (variable in calcMain)
         loop
 
         #Converting Data inside lists to string
         for i in range(len(voltage_mag)):
-            #Tab1
+            #Tab1 This is largest number of rows
             bus[i]=str(bus[i])
             voltage_mag[i]=str(voltage_mag[i])
             voltage_angle[i]=str(voltage_angle[i])
-            #Tab2
+            #Tab4 len = Len(voltage)
+
+            #Tab2 len = Len(voltage) - 1
             real_loss[i]=str(real_loss[i])
             img_loss[i]=str(img_loss[i])
             app_loss[i]=str(app_loss[i])
             toFromList[i]=str(toFromList[i])
-            #Tab3
+            #Tab3 Len = 1
             total_real_loss[i]=str(total_real_loss[i])
             total_reactive_loss[i]=str(total_reactive_loss[i])
             total_apparent_loss[i]=str(total_apparent_loss[i])
-            #Tab4
             
-            #Tab5
+            #Tab5 len(err)
             err_val[i]=str(err_val[i])
             loop[i]=str(loop[i])
             
