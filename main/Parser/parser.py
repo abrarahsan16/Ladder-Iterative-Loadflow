@@ -279,10 +279,10 @@ class dataParser():
         loss_data_input=loss_data.tolist()
 
             #Tab3 final data
-        total_loss_data=np.stack((total_real_loss_arr,total_reactive_loss,total_apparent_loss))
+        total_loss_data=np.stack((total_real_loss_arr,total_reactive_loss_arr,total_apparent_loss_arr))
         total_loss_data=np.transpose(total_loss_data)
         total_loss_data_input=total_loss_data.tolist()
-
+        
             #Tab4 final data
             
             #Tab5 final data
@@ -290,6 +290,9 @@ class dataParser():
         err_data=np.transpose(err_data)
         err_data_input=err_data.tolist()
         
+        print(loop_arr)
+        print(err_data_input)
+        print(app_loss_arr)
         self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, err_data_input)
 
 
@@ -315,7 +318,7 @@ class dataParser():
         tab1_layout =  [[sg.Table(values=volt_data_input, headings = heading_volt, max_col_width=35,
                         auto_size_columns=True,
                         display_row_numbers=True,
-                        justification='right',
+                        justification='center',
                         num_rows=10,
                         key='-VOLT_TABLE-',
                         row_height=35)]]    
@@ -323,7 +326,7 @@ class dataParser():
         tab2_layout = [[sg.Table(values=loss_data_input, headings = heading_loss, max_col_width=35,
                         auto_size_columns=True,
                         display_row_numbers=True,
-                        justification='right',
+                        justification='center',
                         num_rows=10,
                         key='-LOSS_TABLE-',
                         row_height=35)]]
@@ -331,7 +334,7 @@ class dataParser():
         tab3_layout=[[sg.Table(values=total_loss_data_input, headings = heading_total_loss, max_col_width=35,
                         auto_size_columns=True,
                         display_row_numbers=True,
-                        justification='right',
+                        justification='center',
                         num_rows=10,
                         key='-TOTAL_LOSS_TABLE--',
                         row_height=35)]]
@@ -341,7 +344,7 @@ class dataParser():
         tab5_layout=[[sg.Table(values=err_data_input, headings = heading_error, max_col_width=35,
                         auto_size_columns=True,
                         display_row_numbers=True,
-                        justification='right',
+                        justification='center',
                         num_rows=10,
                         key='-ERROR_TABLE--',
                         row_height=35)]]
