@@ -5,6 +5,7 @@ import os
 import matplotlib.pyplot as plt
 from Calculation import FWRsweep, BKWsweep, LossEquation
 import PySimpleGUI as sg
+import time
 def calcMain(busArr, branchArr, Tol, Sb, Vb):
     Sb = Sb
     Vb = Vb * 10**3
@@ -66,7 +67,8 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         plt.savefig(dir_path+"\\"+'errorVal.png')
 
         if n == 50: # If the iteration exceeds 50 iterations, end run
-            sg.Print("Failed to converge. Report has not been created")
+            sg.Print("Failed to converge. Report has not been created. Exiting...")
+            time.sleep(5)
             break
     '''
     BU = busArr[:, 0] #Counts the number of buses
