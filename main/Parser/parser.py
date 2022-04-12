@@ -345,7 +345,7 @@ class dataParser():
         heading_injection=['Bus No','Real Power Injection (KW)','Reactive Power Injection (KVAR)','Apparent Power Injection (KVA)']
         heading_error=['Iteration Number', 'Error Percentage']
         
-        
+        sg.theme('DarkAmber')
     # layout=[
     #       [sg.Table(values= volt_data_input, headings = heading_volt, max_col_width=35,
     #                  auto_size_columns=True,
