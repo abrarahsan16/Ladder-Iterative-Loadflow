@@ -235,7 +235,8 @@ class dataParser():
         if not os.path.exists(filePath):
             os.makedirs(filePath)
 
-        writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')
+        savePath = filePath + "\\" + excelNameToSave + '.xlsx'
+        writer = pd.ExcelWriter(savePath,engine='xlsxwriter')
 
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
         finalsLossOut.to_excel(writer, sheet_name='Power Flow')
@@ -373,7 +374,7 @@ class dataParser():
         #print(loop_arr)
         #print(err_data_input)
         #print(app_loss_arr)
-        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, injected_data_input,err_data_input, filePath)
+        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, injected_data_input,err_data_input, savePath)
 
 
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input, filePath):
@@ -440,7 +441,7 @@ class dataParser():
                         row_height=35)]]
 
         layout = [[sg.TabGroup([[sg.Tab('Voltage', tab1_layout, tooltip='tip'), sg.Tab('Power Flow', tab2_layout),sg.Tab('Total Power Loss', tab3_layout),sg.Tab('Power Injection', tab4_layout),sg.Tab('Error per Iteration', tab5_layout)]], tooltip='TIP2')],    
-                [sg.Button('Open Folder')]]    
+                [sg.Button('Open File')]]    
 
         window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
 
@@ -448,7 +449,7 @@ class dataParser():
             event, values = window.read()    
             print(event,values) 
 
-            if event =='Open Folder':
+            if event =='Open File':
                 path=os.path.realpath(filePath)
                 os.startfile(path) 
             if event == sg.WIN_CLOSED:           # always,  always give a way out!    
