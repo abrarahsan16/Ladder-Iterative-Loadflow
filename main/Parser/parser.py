@@ -217,7 +217,6 @@ class dataParser():
         print("File Saved!")
 
 
-
         #Creating Tab 1 (Bus, Voltage, Voltage Angle)
         #Tab1 data
         bus=voltageOut['Bus No'].tolist()
@@ -281,8 +280,8 @@ class dataParser():
             #Tab1 Data
         bus_arr=np.array(bus)
         volt_mag=np.array(voltage_mag)
-        volt_mag_v=np.array(voltage_mag_v)
         volt_angle=np.array(voltage_angle)
+        volt_mag_v=np.array(voltage_mag_v)
 
             #Tab2 Data
         real_loss_arr=np.array(real_loss)
@@ -324,7 +323,7 @@ class dataParser():
         total_loss_data_input=total_loss_data.tolist()
         
             #Tab4 final data
-        injected_data=np.stack(injected_bus_arr,injected_real_arr,injected_reactive_arr,injected_apparent_arr)
+        injected_data=np.stack((injected_bus_arr,injected_real_arr,injected_reactive_arr,injected_apparent_arr))
         injected_data=np.transpose(injected_data)
         injected_data_input=injected_data.tolist() 
             #Tab5 final data
@@ -413,4 +412,3 @@ class dataParser():
                 break  
             #end of tab code
         #raise NotImplementedError('Implement this function/method.')
-        
