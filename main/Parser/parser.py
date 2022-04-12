@@ -249,6 +249,9 @@ class dataParser():
         voltage_angle=voltageOut['Voltage Angle (Degree)'].tolist()
 
         #Tab 2: bus, real line loss, reactive line loss, apparent line loss
+        real_PF=finalsLossOut['Real Power Flow (KW)'].tolist()
+        reactive_PF=finalsLossOut['Reactive Power Flow (KVAR)'].tolist()
+        apparent_PF=finalsLossOut[ 'Apparent Power Flow (KVA)'].tolist()
         real_loss=finalsLossOut['Real Power Loss (KW)'].tolist()
         img_loss=finalsLossOut['Reactive Power Loss (KVAR)'].tolist()
         app_loss=finalsLossOut['Apparent Power Loss (KVA)'].tolist()
@@ -289,6 +292,9 @@ class dataParser():
                 img_loss[i]=str(img_loss[i])
                 app_loss[i]=str(app_loss[i])
                 toFromList[i]=str(toFromList[i])
+                real_PF[i]=str(real_PF[i])
+                reactive_PF[i]=str(reactive_PF[i])
+                apparent_PF[i]=str(apparent_PF[i])
             #Tab3 Len = 1
             if(i<1):
                 total_real_loss[i]=str(total_real_loss[i])
@@ -311,7 +317,10 @@ class dataParser():
         real_loss_arr=np.array(real_loss)
         img_loss_arr=np.array(img_loss)
         app_loss_arr=np.array(app_loss)
-
+        real_PF_arr=np.array(real_PF)
+        reactive_PF_arr=np.array(reactive_PF)
+        apparent_PF_arr=np.array(apparent_PF)
+    
             #Tab3 Data
         total_real_loss_arr=np.array(total_real_loss)
         total_reactive_loss_arr=np.array(total_reactive_loss)
@@ -337,7 +346,7 @@ class dataParser():
         volt_data_input=volt_data.tolist()
 
             #Tab2 final data
-        loss_data=np.stack((toFromList,real_loss_arr,img_loss_arr,app_loss_arr))
+        loss_data=np.stack((toFromList,real_PF_arr,reactive_PF_arr,apparent_PF_arr,real_loss_arr,img_loss_arr,app_loss_arr))
         loss_data=np.transpose(loss_data)
         loss_data_input=loss_data.tolist()
 
@@ -364,7 +373,7 @@ class dataParser():
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
         heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)','Voltage Angle (Degree)']
-        heading_loss=['Bus', 'Real Power Loss (KW)','Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
+        heading_loss=['Bus','Real Power Flow (KW)', 'Reactive Power Flow (KVAR)', 'Apparent Power Flow (KVA)', 'Real Power Loss (KW)','Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
         heading_total_loss=['Total Real Power Losses (KW)','Total Reactive Power Losses (KVAR)', 'Total Apparent Power Losses (KVA)']
         heading_injection=['Bus No','Real Power Injection (KW)','Reactive Power Injection (KVAR)','Apparent Power Injection (KVA)']
         heading_error=['Iteration Number', 'Error Percentage']
