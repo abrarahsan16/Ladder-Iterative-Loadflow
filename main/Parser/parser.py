@@ -376,7 +376,7 @@ class dataParser():
 
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
         sg.Print('Generating Preview Window')
-        time.sleep(2.4)
+        time.sleep(2)
         sg.Print('')
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
         heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)','Voltage Angle (Degree)']
