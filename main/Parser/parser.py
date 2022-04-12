@@ -397,7 +397,7 @@ class dataParser():
                         key='-ERROR_TABLE--',
                         row_height=35)]]
 
-        layout = [[sg.TabGroup([[sg.Tab('Tab 1', tab1_layout, tooltip='tip'), sg.Tab('Tab 2', tab2_layout),sg.Tab('Tab 3', tab3_layout),sg.Tab('Tab 4', tab4_layout),sg.Tab('Tab 5', tab5_layout)]], tooltip='TIP2')],    
+        layout = [[sg.TabGroup([[sg.Tab('Voltage', tab1_layout, tooltip='tip'), sg.Tab('Power Loss', tab2_layout),sg.Tab('Total Power Loss', tab3_layout),sg.Tab('Power Injection', tab4_layout),sg.Tab('Error per Iteration', tab5_layout)]], tooltip='TIP2')],    
                 [sg.Button('Open File')]]    
 
         window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
