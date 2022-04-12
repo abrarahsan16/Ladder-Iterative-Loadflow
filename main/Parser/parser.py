@@ -12,7 +12,7 @@ class dataParser():
                 return True
         else:
             return False
-
+        sg.print('Excel Tables Exist')
     def extractData(self, npArr, txt):
 
         lenOfArray = npArr.shape[0] # Length of the array
@@ -39,6 +39,7 @@ class dataParser():
         return arrayToReturn
 
     def branchReorder(self, branchData):
+        sg.print('Reordering Branch Data')
         newData = branchData
         lenOfArray = newData.shape[0]
         zerosCol = np.zeros((newData.shape[0],1))
@@ -122,6 +123,7 @@ class dataParser():
             return float(SBase)
     
     def powerFlowCalculation(self, busArr, inputArr, sLossArr, powerInjection, Sb):
+        sg.print('Starting Power Flow Calculations')
         sFlow = np.zeros([inputArr.shape[0], 1], dtype = np.complex_)
         for i in range(0, len(inputArr)):
             busFinder = np.where(inputArr[i, 1] == busArr[:, 0])
@@ -140,6 +142,7 @@ class dataParser():
 
     def dataExporter(self, busData, branchData, outputArr, loss, Sb, Vb, Err, loop):
         # Initialize the arrays
+        sg.print('Starting Data Export')
         voltageArr = np.zeros([outputArr.shape[0], 4])
         firstVoltageRow = np.zeros([1, voltageArr.shape[1]])
         firstVoltageRow[0, 0] = 1
@@ -371,6 +374,7 @@ class dataParser():
 
 
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
+        sg.print('Generating Preview Window')
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
         heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)','Voltage Angle (Degree)']
         heading_loss=['Bus','Real Power Flow (KW)', 'Reactive Power Flow (KVAR)', 'Apparent Power Flow (KVA)', 'Real Power Loss (KW)','Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']

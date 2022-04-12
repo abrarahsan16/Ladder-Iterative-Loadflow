@@ -1,7 +1,8 @@
 import numpy as np
 import math as mth
-
+import PySimpleGUI as sg
 def LossEquation(branchArr, Sb):
+    sg.print('Calculating error value in forward sweep')
     sLoss = np.zeros([branchArr.shape[0], 1], dtype = np.complex_)
     for i in range(len(branchArr)):
         ZZ = complex(branchArr[i, 2], branchArr[i, 3])
