@@ -1,7 +1,7 @@
 import numpy as np
 import PySimpleGUI as sg
 def FWR(inputArr, Vs):
-   sg.print('Calculating Voltage in Forward Sweep')
+   sg.Print('Calculating Voltage in Forward Sweep')
    for i in range(len(inputArr)):
       ZZ = complex(inputArr[i,2], inputArr[i,3])
       dup = np.where(inputArr[:, 0] == inputArr[i, 0])

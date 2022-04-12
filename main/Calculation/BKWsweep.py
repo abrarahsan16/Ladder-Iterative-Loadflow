@@ -15,7 +15,7 @@ def BKWsweep(busArr, inputArr):
 
     # Calculate the currents for each bus
     for i in range(len(inputArr)-1,-1,-1):
-        sg.print('Calculating Current in Backward Sweep')
+        sg.Print('Calculating Current in Backward Sweep')
         dup = np.where(inputArr[:, 0] == inputArr[i, 1])
         #print(dup[0])
         if len(dup[0]) <= 1:
