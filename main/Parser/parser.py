@@ -440,7 +440,7 @@ class dataParser():
                         row_height=35)]]
 
         layout = [[sg.TabGroup([[sg.Tab('Voltage', tab1_layout, tooltip='tip'), sg.Tab('Power Flow', tab2_layout),sg.Tab('Total Power Loss', tab3_layout),sg.Tab('Power Injection', tab4_layout),sg.Tab('Error per Iteration', tab5_layout)]], tooltip='TIP2')],    
-                [sg.Button('Open File')]]    
+                [sg.Button('Open Folder')]]    
 
         window = sg.Window('Load Flow Calculator Output', layout, default_element_size=(12,1))    
 
@@ -448,8 +448,9 @@ class dataParser():
             event, values = window.read()    
             print(event,values) 
 
-            if event =='Open FIle':
-                print("Beep Boop") 
+            if event =='Open Folder':
+                path=os.path.realpath(filePath)
+                os.startfile(path) 
             if event == sg.WIN_CLOSED:           # always,  always give a way out!    
                 break  
             #end of tab code
