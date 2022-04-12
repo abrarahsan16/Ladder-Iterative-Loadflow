@@ -120,7 +120,22 @@ class dataParser():
                 i = i + 1
                 SBase = splitRyeString[i]
             return float(SBase)
-    def powerFlowCalculation(self, busData, branchData, sLossArr, powerInjection):
+    
+    def powerFlowCalculation(self, busArr, inputArr, sLossArr, powerInjection, Sb):
+        sFlow = np.zeros([inputArr.shape[0], 1], dtype = np.complex_)
+        for i in range(0, len(inputArr)):
+            busFinder = np.where(inputArr[i, 1] == busArr[:, 0])
+            j = busFinder[0][0]
+            sLoad = complex(busArr[j, 1], busArr[j, 2]) * 1000 # kVA
+            if i == 0:
+                sFlow[i, 0] = powerInjection[i, 1] - sLoad - complex(sLossArr[i, 1], sLossArr[i, 2])
+            elif inputArr[i, 0] == inputArr[i - 1, 1]:
+                sFlow[i, 0] = powerInjection[i, 1] - sLoad - complex(sLossArr[i, 1], sLossArr[i, 2])
+            elif inputArr[i, 0] != inputArr[i - 1, 1]:
+                dup = np.where(inputArr[:, 0] == inputArr[i, 0])
+                k = dup[0][0]
+                sFlow[i, 0] = powerInjection[k, 1] - sLoad - complex(sLossArr[i, 1], sLossArr[i, 2])
+        return sFlow
         raise NotImplementedError('Implement this function/method.')
 
     def dataExporter(self, busData, branchData, outputArr, loss, Sb, Vb, Err, loop):
@@ -131,7 +146,7 @@ class dataParser():
         firstVoltageRow[0, 1] = 1
         firstVoltageRow[0, 2] = 1 * Vb
         firstVoltageRow[0, 3] = 0
-        sLossArr = np.zeros([outputArr.shape[0], 4])
+        sLossArr = np.zeros([outputArr.shape[0], 7])
         powerInjection = np.zeros([outputArr.shape[0], 2], dtype=np.complex_)
         firstPowerInjectionRow = np.zeros([1, powerInjection.shape[1]], dtype=np.complex_)
         firstPowerInjectionRow[0, 0] = 1
@@ -148,15 +163,14 @@ class dataParser():
         sortedVoltageArr = voltageArr[voltageArr[:, 0].argsort()]
 
         # Calculate the Loss in Per Units
-        sLossArr[:, 1] = np.real(loss[:, 0]) # Real Power
-        sLossArr[:, 2] = np.imag(loss[:, 0]) # Imaginary Power
-        sLossArr[:, 3] = np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2])) # Sqrt(Real^2+Imag^2)        
+        sLossArr[:, 4] = np.real(loss[:, 0]) # Real Power
+        sLossArr[:, 5] = np.imag(loss[:, 0]) # Imaginary Power
+        sLossArr[:, 6] = np.sqrt(np.square(sLossArr[:, 4]) + np.square(sLossArr[:, 5])) # Sqrt(Real^2+Imag^2)        
 
         # Convert from PU to real values in kW, kVar and kVA
         sLossArr = np.around(sLossArr * Sb * 1000, 3)
         sLossArr[:, 0] = np.real(outputArr[:, 1])
-        sortedLossArr = sLossArr[sLossArr[:, 0].argsort()]
-        sortedWithoutBus = np.delete(sortedLossArr, 0, 1)
+        
 
         # Calculate power injection for each bus
         powerInjectionV = outputArr[:, 4]
@@ -170,12 +184,20 @@ class dataParser():
         sPowerInjection[:, 1] = np.around(np.real(sortedpowerInjection[:, 1]), 3) # Real Power
         sPowerInjection[:, 2] = np.around(np.imag(sortedpowerInjection[:, 1]), 3) # Imaginary Power
         sPowerInjection[:, 3] = np.around(np.sqrt(np.square(sPowerInjection[:, 1]) + np.square(sPowerInjection[:, 2])), 3) # Sqrt(Real^2+Imag^2)
+        
+        # Power Flow
+        sFlow = self.powerFlowCalculation(busData, outputArr, sLossArr, powerInjection, Sb)
+        sLossArr[:, 1] = np.real(sFlow[:, 0])
+        sLossArr[:, 2] = np.imag(sFlow[:, 0])
+        sLossArr[:, 3] = np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2]))
+        sortedLossArr = sLossArr[sLossArr[:, 0].argsort()]
+        sortedWithoutBus = np.delete(sortedLossArr, 0, 1)
 
         # Total Loss
         sLossTotalArr = np.zeros([1, 3])
-        sLossTotalArr[0,0] = np.around(np.sum(sLossArr[:, 1]), 3)
-        sLossTotalArr[0,1] = np.around(np.sum(sLossArr[:, 2]), 3)
-        sLossTotalArr[0,2] = np.around(np.sum(sLossArr[:, 3]), 3)
+        sLossTotalArr[0,0] = np.around(np.sum(sLossArr[:, 4]), 3)
+        sLossTotalArr[0,1] = np.around(np.sum(sLossArr[:, 5]), 3)
+        sLossTotalArr[0,2] = np.around(np.sum(sLossArr[:, 6]), 3)
 
         # Create To-From List to append to sLoss
         toFromList = []
@@ -190,7 +212,7 @@ class dataParser():
         voltageOut = pd.DataFrame(sortedVoltageArr)
         voltageOut.columns = ['Bus No', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)', 'Voltage Angle (Degree)']
         sLossOut = pd.DataFrame(sortedWithoutBus)
-        sLossOut.columns = ['Real Power Loss (KW)', 'Reactive Power Loss (KVAR)', 'Apparent Power Loss (KVA)']
+        sLossOut.columns = ['Real Power Flow (KW)', 'Reactive Power Flow (KVAR)', 'Apparent Power Flow (KVA)', 'Real Power Loss (KW)', 'Reactive Power Loss (KVAR)', 'Apparent Power Loss (KVA)']
         sinjectionOut = pd.DataFrame(sPowerInjection)
         sinjectionOut.columns = ['Bus No', 'Real Power Injection (KW)', 'Reactive Power Injection (KVAR)', 'Apparent Power Injection (KVA)']
         sTotalLossOut = pd.DataFrame(sLossTotalArr)
@@ -210,9 +232,9 @@ class dataParser():
         writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')
 
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
-        finalsLossOut.to_excel(writer, sheet_name='Line Power Loss')
+        finalsLossOut.to_excel(writer, sheet_name='Power Flow')
         sinjectionOut.to_excel(writer, sheet_name='Power Injection')
-        sTotalLossOut.to_excel(writer, sheet_name='Line Power Loss', startrow=finalsLossOut.shape[0] + 1, startcol=1)
+        sTotalLossOut.to_excel(writer, sheet_name='Power Flow', startrow=finalsLossOut.shape[0] + 1, startcol=1+3)
         errOut.to_excel(writer, sheet_name='Error Percentage')
         writer.save()
 
