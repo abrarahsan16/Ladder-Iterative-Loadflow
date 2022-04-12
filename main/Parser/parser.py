@@ -4,6 +4,7 @@ import sys
 import os, subprocess
 from datetime import datetime as dt
 import PySimpleGUI as sg
+import time
 class dataParser():
     def checkIfAllTablesExist(self, arr):
         # Check if the excel file contains all the necessary tables
@@ -375,6 +376,8 @@ class dataParser():
 
     def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
         sg.Print('Generating Preview Window')
+        time.sleep(2.4)
+        sg.Print('')
         #headings = ['Voltage' , 'Voltage Angle', 'Line Power', 'Load per Bus', 'Power Loss']
         heading_volt=['Bus', 'Voltage Magnitude (PU)', 'Voltage Magnitude (V)','Voltage Angle (Degree)']
         heading_loss=['Bus','Real Power Flow (KW)', 'Reactive Power Flow (KVAR)', 'Apparent Power Flow (KVA)', 'Real Power Loss (KW)','Reactive Power Loss (KVAR)','Apparent Power Loss (KVA)']
