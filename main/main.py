@@ -10,10 +10,10 @@ from Calculation import calcMain
 if __name__ == '__main__':
 
     
-    event, cdfPath, tol = guiInit.gui_initial()
+    #event, cdfPath, tol = guiInit.gui_initial()
     dataParser = dataParser()
-    #cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 33.xlsx"
-    #tol = 0.0001
+    cdfPath = "E:\Github\Ladder-Iterative-Loadflow\Documentations\\Datasets\\IEEE 33.xlsx"
+    tol = 0.0001
     readInput = pd.read_excel(cdfPath, header=None)
     
     numpyConversion = readInput.to_numpy()

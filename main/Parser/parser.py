@@ -131,13 +131,13 @@ class dataParser():
             j = busFinder[0][0]
             sLoad = complex(busArr[j, 1], busArr[j, 2]) * 1000 # kVA
             if i == 0:
-                sFlow[i, 0] = powerInjection[i, 1] - sLoad - complex(sLossArr[i, 1], sLossArr[i, 2])
+                sFlow[i, 0] = powerInjection[i, 1] - sLoad - complex(sLossArr[i, 4], sLossArr[i, 5])
             elif inputArr[i, 0] == inputArr[i - 1, 1]:
-                sFlow[i, 0] = powerInjection[i, 1] - sLoad - complex(sLossArr[i, 1], sLossArr[i, 2])
+                sFlow[i, 0] = powerInjection[i, 1] - sLoad - complex(sLossArr[i, 4], sLossArr[i, 5])
             elif inputArr[i, 0] != inputArr[i - 1, 1]:
                 dup = np.where(inputArr[:, 0] == inputArr[i, 0])
                 k = dup[0][0]
-                sFlow[i, 0] = powerInjection[k, 1] - sLoad - complex(sLossArr[i, 1], sLossArr[i, 2])
+                sFlow[i, 0] = powerInjection[k, 1] - sLoad - complex(sLossArr[i, 4], sLossArr[i, 5])
         return sFlow
         raise NotImplementedError('Implement this function/method.')
 
@@ -162,7 +162,7 @@ class dataParser():
         voltageImag = np.imag(outputArr[:, 4]) # Imaginary Voltage
         voltageArr[:, 1] = np.around(np.sqrt(np.square(voltageReal) + np.square(voltageImag)), 4) # Sqrt(Real^2+Imag^2)
         voltageArr[:, 2] = np.around(voltageArr[:, 1] * Vb, 4)
-        voltageArr[:, 3] = np.around(np.arctan2(voltageImag, voltageReal) * (180/np.pi), 4) # arctan(Imag/Real)
+        voltageArr[:, 3] = np.around(np.rad2deg(np.arctan2(voltageImag, voltageReal)), 4) # arctan(Imag/Real)
         voltageArr = np.concatenate((firstVoltageRow, voltageArr), axis = 0)
         sortedVoltageArr = voltageArr[voltageArr[:, 0].argsort()]
 
@@ -191,9 +191,9 @@ class dataParser():
         
         # Power Flow
         sFlow = self.powerFlowCalculation(busData, outputArr, sLossArr, powerInjection, Sb)
-        sLossArr[:, 1] = np.real(sFlow[:, 0])
-        sLossArr[:, 2] = np.imag(sFlow[:, 0])
-        sLossArr[:, 3] = np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2]))
+        sLossArr[:, 1] = np.around(np.real(sFlow[:, 0]), 4)
+        sLossArr[:, 2] = np.around(np.imag(sFlow[:, 0]), 4)
+        sLossArr[:, 3] = np.around(np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2])), 4)
         sortedLossArr = sLossArr[sLossArr[:, 0].argsort()]
         sortedWithoutBus = np.delete(sortedLossArr, 0, 1)
 
@@ -226,13 +226,15 @@ class dataParser():
 
         # Create the name of the excel file
         now = dt.now()
+        busForExcelName = busData[len(busData)-1, 0]
         excelNameToSave = now.strftime("%d%m%Y %H%M")
+        excelNameToSave = str(int(busForExcelName)) + "_" + excelNameToSave
         dir_path = os.path.dirname(os.path.dirname(__file__))
         filePath = dir_path + "\Output Folder"
 
         if not os.path.exists(filePath):
             os.makedirs(filePath)
-        
+
         writer = pd.ExcelWriter(filePath + "\\" + excelNameToSave + '.xlsx',engine='xlsxwriter')
 
         voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
@@ -371,10 +373,10 @@ class dataParser():
         #print(loop_arr)
         #print(err_data_input)
         #print(app_loss_arr)
-        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, injected_data_input,err_data_input)
+        self.Preview_Window(volt_data_input, loss_data_input, total_loss_data_input, injected_data_input,err_data_input, filePath)
 
 
-    def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input):
+    def Preview_Window(self, volt_data_input, loss_data_input, total_loss_data_input, injected_data_input, err_data_input, filePath):
         sg.Print('Generating Preview Window')
         time.sleep(2)
         sg.Print('')
