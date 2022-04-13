@@ -160,9 +160,9 @@ class dataParser():
         voltageArr[:, 0] = np.real(outputArr[:, 1])
         voltageReal = np.real(outputArr[:, 4]) # Real Voltage
         voltageImag = np.imag(outputArr[:, 4]) # Imaginary Voltage
-        voltageArr[:, 1] = np.around(np.sqrt(np.square(voltageReal) + np.square(voltageImag)), 4) # Sqrt(Real^2+Imag^2)
-        voltageArr[:, 2] = np.around(voltageArr[:, 1] * Vb, 4)
-        voltageArr[:, 3] = np.around(np.rad2deg(np.arctan2(voltageImag, voltageReal)), 4) # arctan(Imag/Real)
+        voltageArr[:, 1] = np.around(np.sqrt(np.square(voltageReal) + np.square(voltageImag)), 5) # Sqrt(Real^2+Imag^2)
+        voltageArr[:, 2] = np.around(voltageArr[:, 1] * Vb, 5)
+        voltageArr[:, 3] = np.around(np.rad2deg(np.arctan2(voltageImag, voltageReal)), 5) # arctan(Imag/Real)
         voltageArr = np.concatenate((firstVoltageRow, voltageArr), axis = 0)
         sortedVoltageArr = voltageArr[voltageArr[:, 0].argsort()]
 
@@ -172,36 +172,36 @@ class dataParser():
         sLossArr[:, 6] = np.sqrt(np.square(sLossArr[:, 4]) + np.square(sLossArr[:, 5])) # Sqrt(Real^2+Imag^2)        
 
         # Convert from PU to real values in kW, kVar and kVA
-        sLossArr = np.around(sLossArr * Sb * 1000, 4)
+        sLossArr = np.around(sLossArr * Sb * 1000, 5)
         sLossArr[:, 0] = np.real(outputArr[:, 1])
         
 
         # Calculate power injection for each bus
         powerInjectionV = outputArr[:, 4]
         powerInjectionI = outputArr[:, 6]
-        powerInjection[:, 1] = np.around((powerInjectionV * np.conjugate(powerInjectionI)) * Sb * 1000, 4)
+        powerInjection[:, 1] = np.around((powerInjectionV * np.conjugate(powerInjectionI)) * Sb * 1000, 5)
         powerInjection[:, 0] = np.real(outputArr[:, 1])
         powerInjection = np.concatenate((firstPowerInjectionRow, powerInjection), axis = 0)
         sortedpowerInjection = powerInjection[powerInjection[:, 0].argsort()]
         sPowerInjection = np.zeros((sortedpowerInjection.shape[0], 4))
         sPowerInjection[:, 0] = np.real(sortedpowerInjection[: ,0])
-        sPowerInjection[:, 1] = np.around(np.real(sortedpowerInjection[:, 1]), 4) # Real Power
-        sPowerInjection[:, 2] = np.around(np.imag(sortedpowerInjection[:, 1]), 4) # Imaginary Power
+        sPowerInjection[:, 1] = np.around(np.real(sortedpowerInjection[:, 1]), 5) # Real Power
+        sPowerInjection[:, 2] = np.around(np.imag(sortedpowerInjection[:, 1]), 5) # Imaginary Power
         sPowerInjection[:, 3] = np.around(np.sqrt(np.square(sPowerInjection[:, 1]) + np.square(sPowerInjection[:, 2])), 4) # Sqrt(Real^2+Imag^2)
         
         # Power Flow
         sFlow = self.powerFlowCalculation(busData, outputArr, sLossArr, powerInjection, Sb)
-        sLossArr[:, 1] = np.around(np.real(sFlow[:, 0]), 4)
-        sLossArr[:, 2] = np.around(np.imag(sFlow[:, 0]), 4)
-        sLossArr[:, 3] = np.around(np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2])), 4)
+        sLossArr[:, 1] = np.around(np.real(sFlow[:, 0]), 5)
+        sLossArr[:, 2] = np.around(np.imag(sFlow[:, 0]), 5)
+        sLossArr[:, 3] = np.around(np.sqrt(np.square(sLossArr[:, 1]) + np.square(sLossArr[:, 2])), 5)
         sortedLossArr = sLossArr[sLossArr[:, 0].argsort()]
         sortedWithoutBus = np.delete(sortedLossArr, 0, 1)
 
         # Total Loss
         sLossTotalArr = np.zeros([1, 3])
-        sLossTotalArr[0,0] = np.around(np.sum(sLossArr[:, 4]), 4)
-        sLossTotalArr[0,1] = np.around(np.sum(sLossArr[:, 5]), 4)
-        sLossTotalArr[0,2] = np.around(np.sum(sLossArr[:, 6]), 4)
+        sLossTotalArr[0,0] = np.around(np.sum(sLossArr[:, 4]), 5)
+        sLossTotalArr[0,1] = np.around(np.sum(sLossArr[:, 5]), 5)
+        sLossTotalArr[0,2] = np.around(np.sum(sLossArr[:, 6]), 5)
 
         # Create To-From List to append to sLoss
         toFromList = []
