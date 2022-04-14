@@ -141,7 +141,7 @@ class dataParser():
         return sFlow
         raise NotImplementedError('Implement this function/method.')
 
-    def dataExporter(self, busData, branchData, outputArr, loss, Sb, Vb, Err, loop):
+    def dataExporter(self, busData, branchData, outputArr, loss, Sb, Vb, Err, loop, readInput):
         # Initialize the arrays
         sg.Print('Starting Data Export')
         voltageArr = np.zeros([outputArr.shape[0], 4])
@@ -238,11 +238,12 @@ class dataParser():
         savePath = filePath + "\\" + excelNameToSave + '.xlsx'
         writer = pd.ExcelWriter(savePath,engine='xlsxwriter')
 
-        voltageOut.to_excel(writer, sheet_name='Voltage Output in PU')
-        finalsLossOut.to_excel(writer, sheet_name='Power Flow')
-        sinjectionOut.to_excel(writer, sheet_name='Power Injection')
-        sTotalLossOut.to_excel(writer, sheet_name='Power Flow', startrow=finalsLossOut.shape[0] + 1, startcol=1+3)
-        errOut.to_excel(writer, sheet_name='Error Percentage')
+        readInput.to_excel(writer, sheet_name='Input', index=False)
+        voltageOut.to_excel(writer, sheet_name='Voltage Output in PU', index=False)
+        finalsLossOut.to_excel(writer, sheet_name='Power Flow', index=False)
+        sinjectionOut.to_excel(writer, sheet_name='Power Injection', index=False)
+        sTotalLossOut.to_excel(writer, sheet_name='Power Flow', startrow=finalsLossOut.shape[0] + 1, startcol=1+3, index=False)
+        errOut.to_excel(writer, sheet_name='Error Percentage', index=False)
         writer.save()
 
         print("File Saved!")
