@@ -63,6 +63,7 @@ def calcMain(busArr, branchArr, Tol, Sb, Vb):
         plt.title('Error Value per loop')
         plt.xlabel('Iteration number')
         plt.ylabel('Error Value')
+        plt.grid()
         dir_path = os.path.dirname(os.path.dirname(__file__))
         plt.savefig(dir_path+"\\"+'errorVal.png')
 
